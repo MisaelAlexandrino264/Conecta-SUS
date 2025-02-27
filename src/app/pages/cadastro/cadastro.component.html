@@ -1,0 +1,62 @@
+<div class="cadastro-container">
+  <h1 class="app-title">Interpront</h1>
+  <div class="cadastro-card">
+    <h2>Cadastro</h2>
+    <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
+
+      <mat-form-field appearance="fill" class="full-width" floatLabel="always">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email">
+        <mat-error *ngIf="cadastroForm.controls['email'].invalid && cadastroForm.controls['email'].touched">
+          Por favor, digite um email válido
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width" floatLabel="always">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="nome" type="text">
+        <mat-error *ngIf="cadastroForm.controls['nome'].invalid && cadastroForm.controls['nome'].touched">
+          O nome é obrigatório.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width" floatLabel="always">
+        <mat-label>Departamento</mat-label>
+        <input matInput formControlName="departamento" type="text">
+        <mat-error *ngIf="cadastroForm.controls['departamento'].invalid && cadastroForm.controls['departamento'].touched">
+          O departamento é obrigatório.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width" floatLabel="always">
+        <mat-label>Senha</mat-label>
+        <input matInput formControlName="password" type="password">
+        <mat-error *ngIf="cadastroForm.controls['password'].hasError('minlength')">
+          A senha precisa ter pelo menos 6 caracteres.
+        </mat-error>
+      </mat-form-field>
+      
+      <mat-form-field appearance="fill" class="full-width" floatLabel="always">
+        <mat-label>Confirmar Senha</mat-label>
+        <input matInput formControlName="confirmPassword" type="password" (input)="verificarSenha()">
+        <mat-error *ngIf="senhaInvalida">
+          As senhas não coincidem.
+        </mat-error>
+      </mat-form-field>
+      
+
+      <p class="login-link">
+        Já tem uma conta? <a routerLink="/login">Faça login</a>
+      </p>
+
+      <button mat-raised-button color="accent" class="full-width" type="submit">
+        Cadastrar
+      </button>
+      
+      <mat-error *ngIf="formInvalido" class="error-message">
+        Preencha todos os campos corretamente.
+      </mat-error>
+      
+    </form>
+  </div>
+</div>

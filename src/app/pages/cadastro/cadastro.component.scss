@@ -1,0 +1,63 @@
+.cadastro-container {
+    display: flex;
+    justify-content: flex-end; // Alinhado à direita
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #0d47a1 50%, #ffffff 50%);
+    padding-right: 10%;
+  
+    .cadastro-card {
+      width: 350px;
+      padding: 20px;
+      background: #ffffff;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      text-align: center;
+      margin-right: 5%;
+  
+      h2 {
+        color: #0d47a1;
+        margin-bottom: 20px;
+      }
+  
+      .full-width {
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+  
+    .app-title {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+  
+    button {
+      background-color: #0d47a1;
+      color: white;
+      &:hover {
+        background-color: #1565c0;
+      }
+    }
+  
+    .login-link {
+      margin: 10px 0;
+      font-size: 0.9rem;
+      text-align: center;
+      color: #333;
+    }
+  
+    .login-link a {
+      color: #0d47a1;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  }
+  

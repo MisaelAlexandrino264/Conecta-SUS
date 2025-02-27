@@ -1,0 +1,80 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(to right, #0d47a1 50%, #ffffff 50%);
+  position: relative;
+
+  .login-card {
+    width: 350px;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+
+    h2 {
+      color: #0d47a1;
+      margin-bottom: 20px;
+    }
+
+    .full-width {
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+
+  .app-title {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+
+  button {
+    background-color: #0d47a1;
+    color: white;
+    &:hover {
+      background-color: #1565c0;
+    }
+  }
+}
+
+.footer-text-container {
+  position: absolute;
+  bottom: 20px;
+  left: 45%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.footer-text {
+  color: #0d47a1;
+  font-size: 1.5rem;
+  text-align: center;
+  max-width: 80%;
+}
+
+.register-link {
+  margin: 10px 0;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #333;
+}
+
+.register-link a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}

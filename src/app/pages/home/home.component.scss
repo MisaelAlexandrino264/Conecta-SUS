@@ -1,0 +1,48 @@
+.content {
+  margin-top: 100px; // Ajuste para evitar sobreposição com a navbar maior
+  padding: 60px;
+}
+
+.main-layout {
+  display: flex;
+  justify-content: space-between; /* Espaçamento entre as colunas */
+  gap: 20px; /* Espaço entre as colunas */
+}
+
+.left-column {
+  flex: 1; /* Ocupa o espaço restante */
+  padding: 20px;
+  background-color: #e8f0fe; /* Cor de fundo para destacar */
+  border-radius: 8px;
+}
+
+.right-column {
+  flex: 0.4; /* Ocupa 40% do espaço */
+  padding: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #e8f0fe; /* Cor de fundo suave */
+  border-radius: 8px;
+  flex-direction: column; /* Organiza os elementos verticalmente */
+}
+
+.demo-inline-calendar-card {
+  width: 300px; /* Tamanho do calendário */
+  margin: 0 auto; /* Centraliza o calendário na coluna */
+}
+
+.appointment {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+  color: #1976d2;
+}
+
+.schedule-btn {
+  margin-top: 20px; /* Espaço acima do botão */
+}
