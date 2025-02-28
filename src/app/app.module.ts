@@ -24,13 +24,18 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
+import { MatDialogModule } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { AgendamentoModalComponent } from './pages/home/agendamento-modal/agendamento-modal.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     CadastroComponent,
     HomeComponent,
-    MenuComponent
+    MenuComponent,
+    AgendamentoModalComponent
   ],
   imports: [
     BrowserModule,
@@ -44,8 +49,9 @@ import { MatNativeDateModule } from '@angular/material/core';
     AngularFireAuthModule,
     AngularFirestoreModule,
     MatDatepickerModule,
-    MatNativeDateModule
-
+    MatNativeDateModule,
+    MatDialogModule,
+    FormsModule
   ],
   providers: [
     provideAnimationsAsync(),

@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Agendar Atendimento</h2>
+<mat-dialog-content class="modal-content">
+  <p><strong>Data Selecionada:</strong> {{ data.dataSelecionada | date: 'dd/MM/yyyy' }}</p>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Hora</mat-label>
+    <input matInput [(ngModel)]="hora" placeholder="Ex: 14:00">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Nome</mat-label>
+    <input matInput [(ngModel)]="nome" placeholder="Nome do paciente">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Idade</mat-label>
+    <input matInput type="number" [(ngModel)]="idade" placeholder="Idade do paciente">
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="fechar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="salvar()">Salvar</button>
+</mat-dialog-actions>
+

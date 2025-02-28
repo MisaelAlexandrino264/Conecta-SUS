@@ -1,26 +1,28 @@
 <app-menu></app-menu>
 <div class="content">
   <h2>Bem-vindo ao Interpront</h2>
-  
+
   <div class="main-layout">
     <!-- Coluna Esquerda (Horário e Nome do Paciente) -->
     <div class="left-column">
       <h3>Atendimentos</h3>
-      <div class="appointment">
-        <p><strong>Horário:</strong> 14:00</p>
-        <p><strong>Paciente:</strong> João Silva</p>
+      <div *ngFor="let agendamento of agendamentos" class="appointment">
+        <p><strong>Horário:</strong> {{ agendamento.hora }}</p>
+        <p><strong>Paciente:</strong> {{ agendamento.nome }}</p>
       </div>
     </div>
 
     <!-- Coluna Direita (Calendário) -->
     <div class="right-column">
       <mat-card class="demo-inline-calendar-card">
-        <mat-calendar [(selected)]="selected"></mat-calendar>
+        <mat-calendar [(selected)]="selected" (selectedChange)="buscarAgendamentos(selected)"></mat-calendar>
       </mat-card>
-      <p>Data selecionada: {{selected | date: 'dd/MM/yyyy'}}</p>
-      
+      <p>Data selecionada: {{ selected | date: 'dd/MM/yyyy' }}</p>
+
       <!-- Botão para Agendar Atendimento -->
-      <button mat-raised-button color="primary" class="schedule-btn">Agendar Atendimento</button>
+      <button mat-raised-button color="primary" class="schedule-btn" (click)="abrirModalAgendamento()">
+        Agendar Atendimento
+      </button>
     </div>
   </div>
 </div>
