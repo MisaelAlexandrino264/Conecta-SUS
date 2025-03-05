@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
   // Buscar agendamentos de acordo com a data selecionada
   buscarAgendamentos(data: Date | null): void {
     if (data) {
-      this.agendamentoService.obterAgendamentosPorData(data).subscribe((agendamentos) => {
+      this.agendamentoService.obterMeusAgendamentosPorData(data).subscribe((agendamentos) => {
         this.agendamentos = agendamentos; // Atualiza a lista de agendamentos
       });
     }

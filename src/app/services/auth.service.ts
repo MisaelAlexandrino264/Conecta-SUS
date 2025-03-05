@@ -60,6 +60,7 @@ export class AuthService {
     return this.afAuth.authState; // Retorna o estado de autenticação
   }
 
+
   private handleAuthError(error: any) {
     console.error("Erro de autenticação:", error); // Exibe detalhes do erro no console
   
