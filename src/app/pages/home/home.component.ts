@@ -28,7 +28,9 @@ export class HomeComponent implements OnInit {
   buscarAgendamentos(data: Date | null): void {
     if (data) {
       this.agendamentoService.obterMeusAgendamentosPorData(data).subscribe((agendamentos) => {
-        this.agendamentos = agendamentos; // Atualiza a lista de agendamentos
+        this.agendamentos = agendamentos.sort((a, b) => {
+          return a.hora.localeCompare(b.hora); // Ordena por horário (ordem crescente)
+        });
       });
     }
   }
