@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AgendamentoModalComponent } from '../home/agendamento-modal/agendamento-modal.component';
 import { AgendamentoService } from '../../services/agendamento.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-home',
@@ -14,7 +16,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private agendamentoService: AgendamentoService // Injetando o serviço
+    private agendamentoService: AgendamentoService, // Injetando o serviço
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +37,10 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+  iniciarAtendimento(agendamento: any): void {
+    this.router.navigate(['/atendimento'], { queryParams: { id: agendamento.id } });
+  }
+
 
   // Método para abrir o modal
   abrirModalAgendamento(): void {

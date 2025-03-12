@@ -27,6 +27,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { AgendamentoModalComponent } from './pages/home/agendamento-modal/agendamento-modal.component';
+import { AtendimentoComponent } from './pages/atendimento/atendimento.component';
+
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,8 @@ import { AgendamentoModalComponent } from './pages/home/agendamento-modal/agenda
     CadastroComponent,
     HomeComponent,
     MenuComponent,
-    AgendamentoModalComponent
+    AgendamentoModalComponent,
+    AtendimentoComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +55,8 @@ import { AgendamentoModalComponent } from './pages/home/agendamento-modal/agenda
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,
-    FormsModule
+    FormsModule,
+    MatIconModule
   ],
   providers: [
     provideAnimationsAsync(),

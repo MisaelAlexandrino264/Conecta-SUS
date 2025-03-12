@@ -3,6 +3,7 @@ import { Firestore, collection, addDoc, collectionData, query, where, getDocs } 
 import { Auth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 
+
 export interface Agendamento {
   data: string;  // Formato 'YYYY-MM-DD'
   hora: string;  // Exemplo: '14:00'
@@ -90,4 +91,5 @@ export class AgendamentoService {
       });
     });
   }
+
 }

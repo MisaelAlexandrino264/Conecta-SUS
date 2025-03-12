@@ -47,3 +47,23 @@ h3 {
 .schedule-btn {
   margin-top: 20px; /* Espaço acima do botão */
 }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px; // Espaço entre os botões
+}
+
+mat-icon {
+  font-size: 24px;
+}
+
+.custom-btn {
+  background-color: #0d47a1 !important;
+  color: #fff !important;
+}
+
+::ng-deep .mat-calendar-body-selected {
+  background-color: #0d47a1 !important; /* Cor de fundo da bolinha */
+  color: white !important; /* Cor do texto da data */
+}

@@ -9,6 +9,11 @@
       <div *ngFor="let agendamento of agendamentos" class="appointment">
         <p><strong>Horário:</strong> {{ agendamento.hora }}</p>
         <p><strong>Paciente:</strong> {{ agendamento.nome }}</p>
+        
+        <!-- Botão para iniciar atendimento -->
+        <button mat-raised-button class="custom-btn" (click)="iniciarAtendimento(agendamento)">
+          Iniciar Atendimento
+        </button>
       </div>
     </div>
 
@@ -20,7 +25,7 @@
       <p>Data selecionada: {{ selected | date: 'dd/MM/yyyy' }}</p>
 
       <!-- Botão para Agendar Atendimento -->
-      <button mat-raised-button color="primary" class="schedule-btn" (click)="abrirModalAgendamento()">
+      <button mat-raised-button class="custom-btn schedule-btn" (click)="abrirModalAgendamento()">
         Agendar Atendimento
       </button>
     </div>
