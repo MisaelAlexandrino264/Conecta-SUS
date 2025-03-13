@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AgendamentoModalComponent } from '../home/agendamento-modal/agendamento-modal.component';
-import { AgendamentoService } from '../../services/agendamento.service';
+import { Agendamento, AgendamentoService } from '../../services/agendamento.service';
 import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-home',
@@ -12,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   selected: Date | null = null;
-  agendamentos: any[] = []; // Variável para armazenar os agendamentos
+  agendamentos: Agendamento[] = []; // Variável para armazenar os agendamentos
 
   constructor(
     public dialog: MatDialog,
@@ -37,10 +36,10 @@ export class HomeComponent implements OnInit {
       });
     }
   }
+
   iniciarAtendimento(agendamento: any): void {
     this.router.navigate(['/atendimento'], { queryParams: { id: agendamento.id } });
   }
-
 
   // Método para abrir o modal
   abrirModalAgendamento(): void {
@@ -61,4 +60,31 @@ export class HomeComponent implements OnInit {
       }
     });
   }
+
+  // Função para verificar o ID antes de tentar excluir
+  verificarIdEExcluir(id: string | undefined): void {
+    console.log('ID do agendamento:', id);
+    if (id) {
+      this.excluirAgendamento(id);
+    } else {
+      console.error('Erro: ID do agendamento está indefinido!');
+    }
+  }
+
+  excluirAgendamento(id: string): void {
+    if (!id) {
+      console.error('Erro: ID do agendamento está indefinido!');
+      return;
+    }
+  
+    this.agendamentoService.excluirAgendamento(id)
+      .then(() => {
+        console.log('Agendamento excluído com sucesso!');
+        this.buscarAgendamentos(this.selected); // Recarrega os agendamentos após exclusão
+      })
+      .catch((error) => {
+        console.error('Erro ao excluir agendamento:', error);
+      });
+  }
+  
 }

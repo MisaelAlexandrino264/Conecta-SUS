@@ -1,35 +1,35 @@
 .content {
-  margin-top: 100px; // Ajuste para evitar sobreposição com a navbar maior
+  margin-top: 100px;
   padding: 60px;
 }
 
 .main-layout {
   display: flex;
-  justify-content: space-between; /* Espaçamento entre as colunas */
-  gap: 20px; /* Espaço entre as colunas */
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .left-column {
-  flex: 1; /* Ocupa o espaço restante */
+  flex: 1;
   padding: 20px;
-  background-color: #e8f0fe; /* Cor de fundo para destacar */
+  background-color: #e8f0fe;
   border-radius: 8px;
 }
 
 .right-column {
-  flex: 0.4; /* Ocupa 40% do espaço */
+  flex: 0.4;
   padding: 20px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  background-color: #e8f0fe; /* Cor de fundo suave */
+  background-color: #e8f0fe;
   border-radius: 8px;
-  flex-direction: column; /* Organiza os elementos verticalmente */
+  flex-direction: column;
 }
 
 .demo-inline-calendar-card {
-  width: 300px; /* Tamanho do calendário */
-  margin: 0 auto; /* Centraliza o calendário na coluna */
+  width: 300px;
+  margin: 0 auto;
 }
 
 .appointment {
@@ -45,13 +45,14 @@ h3 {
 }
 
 .schedule-btn {
-  margin-top: 20px; /* Espaço acima do botão */
+  margin-top: 20px;
 }
 
-.actions {
+.appointment-actions {
   display: flex;
   align-items: center;
-  gap: 10px; // Espaço entre os botões
+  gap: 15px; /* Espaço entre o botão e os ícones */
+  margin-top: 10px;
 }
 
 mat-icon {
@@ -64,6 +65,22 @@ mat-icon {
 }
 
 ::ng-deep .mat-calendar-body-selected {
-  background-color: #0d47a1 !important; /* Cor de fundo da bolinha */
-  color: white !important; /* Cor do texto da data */
+  background-color: #0d47a1 !important;
+  color: white !important;
+}
+
+.edit-icon, .delete-icon {
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.2s;
+}
+
+.edit-icon:hover {
+  color: #1976d2;
+  transform: scale(1.2);
+}
+
+.delete-icon:hover {
+  color: red;
+  transform: scale(1.2);
 }
