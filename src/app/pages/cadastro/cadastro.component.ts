@@ -35,14 +35,12 @@ export class CadastroComponent {
     const password = this.cadastroForm.get('password')?.value;
     const confirmPassword = this.cadastroForm.get('confirmPassword')?.value;
 
-    // Verifica se as senhas não coincidem e se confirmPassword não está vazio
     this.senhaInvalida = password !== confirmPassword && confirmPassword !== '';
 
-    // Atualiza a validade do campo confirmPassword para refletir a verificação
     if (this.senhaInvalida) {
       this.cadastroForm.get('confirmPassword')?.setErrors({ mismatch: true });
     } else {
-      this.cadastroForm.get('confirmPassword')?.setErrors(null); // limpa o erro caso as senhas coincidam
+      this.cadastroForm.get('confirmPassword')?.setErrors(null); 
     }
   }
 

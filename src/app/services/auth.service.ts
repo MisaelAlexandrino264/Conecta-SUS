@@ -17,9 +17,9 @@ export class AuthService {
   async login(email: string, password: string) {
     try {
       await this.afAuth.signInWithEmailAndPassword(email, password);
-      this.router.navigate(['/home']); // Apenas redireciona, sem alert
+      this.router.navigate(['/home']); 
     } catch (error: any) {
-      this.handleAuthError(error); // Exibe erro apenas em caso de falha
+      this.handleAuthError(error); 
     }
   }
   
@@ -30,9 +30,8 @@ export class AuthService {
       const user = userCredential.user;
   
       if (user) {
-        console.log("Usuário criado com sucesso:", user.uid); // Debug
+        console.log("Usuário criado com sucesso:", user.uid); 
   
-        // Aguardar a gravação no Firestore
         await this.firestore.collection('users').doc(user.uid).set({
           uid: user.uid,
           email: user.email,
@@ -45,24 +44,23 @@ export class AuthService {
         throw new Error("Usuário não foi criado corretamente.");
       }
     } catch (error: any) {
-      console.error("Erro ao registrar:", error); // Exibe erro detalhado no console
+      console.error("Erro ao registrar:", error); 
       this.handleAuthError(error);
     }
   }
   
-
   async logout() {
     await this.afAuth.signOut();
     this.router.navigate(['/login']);
   }
 
   getUser(): Observable<any> {
-    return this.afAuth.authState; // Retorna o estado de autenticação
+    return this.afAuth.authState; 
   }
 
 
   private handleAuthError(error: any) {
-    console.error("Erro de autenticação:", error); // Exibe detalhes do erro no console
+    console.error("Erro de autenticação:", error); 
   
     let errorMsg = "Erro ao processar a solicitação. Tente novamente.";
   

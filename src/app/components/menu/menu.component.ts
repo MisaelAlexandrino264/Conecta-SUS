@@ -10,6 +10,6 @@ export class MenuComponent {
   constructor(private authService: AuthService) {}
 
   logout() {
-    this.authService.logout();  // Chama o logout no AuthService
+    this.authService.logout();  
   }
 }

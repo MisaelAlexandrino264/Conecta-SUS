@@ -11,12 +11,11 @@
         <p><strong>Paciente:</strong> {{ agendamento.nome }}</p>
         
         <div class="appointment-actions">
-          <!-- Botão para iniciar atendimento -->
           <button mat-raised-button class="custom-btn" (click)="iniciarAtendimento(agendamento)">
             Iniciar Atendimento
           </button>
 
-          <mat-icon class="edit-icon">edit</mat-icon>
+          <mat-icon class="edit-icon" (click)="abrirModalAgendamento(agendamento)">edit</mat-icon>
           <mat-icon class="delete-icon" (click)="verificarIdEExcluir(agendamento.id)">delete</mat-icon>
         </div>
       </div>
@@ -25,11 +24,10 @@
     <!-- Coluna Direita (Calendário) -->
     <div class="right-column">
       <mat-card class="demo-inline-calendar-card">
-        <mat-calendar [(selected)]="selected" (selectedChange)="buscarAgendamentos(selected)"></mat-calendar>
+        <mat-calendar [(selected)]="selected" (selectedChange)="buscarAgendamentos(selected)" [dateFilter]="filtroDatas"></mat-calendar>
       </mat-card>
       <p>Data selecionada: {{ selected | date: 'dd/MM/yyyy' }}</p>
 
-      <!-- Botão para Agendar Atendimento -->
       <button mat-raised-button class="custom-btn schedule-btn" (click)="abrirModalAgendamento()">
         Agendar Atendimento
       </button>

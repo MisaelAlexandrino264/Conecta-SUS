@@ -2,25 +2,40 @@
   <h1 class="app-title">Interpront</h1>
   <mat-card class="login-card">
     <h2>Login</h2>
+    
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="fill" class="full-width" floatLabel="always">
         <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email" required>
-        @if (loginForm.controls['email'].invalid){
-          <mat-error>Por favor digite um email válido</mat-error>
-        }
+        <input matInput formControlName="email" type="email">
+        <mat-error *ngIf="loginForm.controls['email'].invalid && loginForm.controls['email'].touched">
+          Por favor, digite um email válido.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width" floatLabel="always">
         <mat-label>Senha</mat-label>
-        <input matInput formControlName="password" type="password" required>
+        <input matInput formControlName="password" type="password">
+        <mat-error *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched">
+          A senha deve ter pelo menos 6 caracteres.
+        </mat-error>
       </mat-form-field>
+
       <p class="register-link">
         Não tem uma conta? <a routerLink="/cadastro">Cadastre-se</a>
       </p>
-      <button mat-raised-button color="accent" class="full-width" type="submit" [disabled]="!loginForm.valid">
+
+      <button mat-raised-button color="accent" class="full-width" type="submit">
         Entrar
       </button>
+
+      <mat-error *ngIf="formInvalido" class="error-message">
+        Preencha todos os campos corretamente.
+      </mat-error>
+
+      <mat-error *ngIf="loginFalhou" class="error-message">
+        Email ou senha incorretos.
+      </mat-error>
+
     </form>
   </mat-card>
 </div>

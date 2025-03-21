@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service'; // Certifique-se de que o caminho está correto
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +9,8 @@ import { AuthService } from '../../services/auth.service'; // Certifique-se de q
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  formInvalido: boolean = false;
+  loginFalhou: boolean = false;
 
   constructor(private fb: FormBuilder, private authService: AuthService) { 
     this.loginForm = this.fb.group({
@@ -18,9 +20,21 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
-      this.authService.login(email, password);
+    this.formInvalido = this.loginForm.invalid;
+
+    if (this.formInvalido) {
+      this.loginForm.markAllAsTouched();
+      return;
     }
+
+    const { email, password } = this.loginForm.value;
+    this.authService.login(email, password)
+    .then(() => {
+      this.loginFalhou = false; 
+    })
+    .catch(() => {
+      this.loginFalhou = true; 
+    });
+
   }
 }

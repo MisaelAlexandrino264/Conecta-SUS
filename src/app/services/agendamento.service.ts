@@ -7,12 +7,12 @@ import { updateDoc } from '@angular/fire/firestore';
 
 
 export interface Agendamento {
-  id?: string;  // Adicionando o id como opcional
-  data: string;  // Formato 'YYYY-MM-DD'
-  hora: string;  // Exemplo: '14:00'
+  id?: string;  
+  data: string;  
+  hora: string;  
   nome: string;
   idade: number;
-  uid?: string;  // Adicionamos o UID do usuário autenticado
+  uid?: string;  
 }
 
 @Injectable({
@@ -23,26 +23,25 @@ export class AgendamentoService {
 
   constructor(private firestore: Firestore, private auth: Auth) {}
 
-  // Salvar um agendamento com UID do usuário autenticado
   async salvarAgendamento(agendamento: Agendamento): Promise<void> {
     const user = this.auth.currentUser;
-
+  
     if (!user) {
       console.error('Usuário não autenticado');
       return;
     }
-
+  
     const agendamentoComUid = {
       ...agendamento,
-      uid: user.uid
+      uid: user.uid 
     };
-
-    await addDoc(this.colecaoAgendamentos, agendamentoComUid)
+  
+    await addDoc(this.colecaoAgendamentos, agendamentoComUid) 
       .then(() => console.log("Agendamento salvo com sucesso!"))
       .catch(error => console.error("Erro ao salvar agendamento:", error));
   }
+  
 
-  // Método para obter agendamentos
 obterMeusAgendamentos(): Observable<Agendamento[]> {
   const user = this.auth.currentUser;
 
@@ -60,7 +59,7 @@ obterMeusAgendamentos(): Observable<Agendamento[]> {
         const agendamento = doc.data() as Agendamento;
         agendamentos.push({
           ...agendamento,
-          id: doc.id // Aqui você já está atribuindo o id corretamente
+          id: doc.id 
         });
       });
       observer.next(agendamentos);
@@ -75,7 +74,7 @@ obterMeusAgendamentos(): Observable<Agendamento[]> {
 
 
 
-  // Obter apenas os agendamentos do usuário logado para uma data específica
+
  // Obter agendamentos do usuário logado para uma data específica
 obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
   const user = this.auth.currentUser;
@@ -85,10 +84,10 @@ obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
     return new Observable();
   }
 
-  const dataString = data.toISOString().split('T')[0]; // Converte a data para formato YYYY-MM-DD
+  const dataString = data.toISOString().split('T')[0]; 
   const q = query(this.colecaoAgendamentos, 
                   where('data', '==', dataString),
-                  where('uid', '==', user.uid)); // Filtra por data e UID
+                  where('uid', '==', user.uid)); 
 
   return new Observable((observer) => {
     getDocs(q).then((querySnapshot) => {
@@ -97,7 +96,7 @@ obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
         const agendamento = doc.data() as Agendamento;
         agendamentos.push({
           ...agendamento,
-          id: doc.id // Certifique-se de que o ID está sendo atribuído aqui
+          id: doc.id 
         });
       });
       observer.next(agendamentos);
@@ -121,5 +120,24 @@ obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
       .then(() => console.log("Agendamento excluído com sucesso!"))
       .catch(error => console.error("Erro ao excluir agendamento:", error));
   }
+
+  async atualizarAgendamento(agendamento: Agendamento): Promise<void> {
+    if (!agendamento.id) {
+      console.error("Erro: ID do agendamento está indefinido!");
+      return;
+    }
+  
+    const docRef = doc(this.firestore, `agenda/${agendamento.id}`);
+  
+    await updateDoc(docRef, {
+      data: agendamento.data,
+      hora: agendamento.hora,
+      nome: agendamento.nome,
+      idade: agendamento.idade
+    })
+    .then(() => console.log("Agendamento atualizado com sucesso!"))
+    .catch(error => console.error("Erro ao atualizar agendamento:", error));
+  }
+  
 
 }
