@@ -1,2 +1,57 @@
 <app-menu></app-menu>
-<p>atendimento works!</p>
+
+<div class="content">
+  <div class="patient-info">
+    <h2>Atendimento</h2>
+    <p><strong>Nome:</strong> {{ nome }}</p>
+    <p><strong>Idade:</strong> {{ idade }} anos</p>
+  </div>
+
+  <form>
+    <div class="input-row">
+      <mat-form-field class="half-width" appearance="outline">
+        <mat-label>Anamnese</mat-label>
+        <textarea matInput [(ngModel)]="anamnese" name="anamnese"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="half-width" appearance="outline">
+        <mat-label>Exame Físico</mat-label>
+        <textarea matInput [(ngModel)]="exameFisico" name="exameFisico"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="input-row">
+      <mat-form-field class="half-width" appearance="outline">
+        <mat-label>Solicitação de Exames</mat-label>
+        <textarea matInput [(ngModel)]="solicitacaoExames" name="solicitacaoExames"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="half-width" appearance="outline">
+        <mat-label>Orientação</mat-label>
+        <textarea matInput [(ngModel)]="orientacao" name="orientacao"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="input-row">
+      <mat-form-field class="half-width" appearance="outline">
+        <mat-label>Prescrição</mat-label>
+        <textarea matInput [(ngModel)]="prescricao" name="prescricao"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="half-width" appearance="outline">
+        <mat-label>Formulários</mat-label>
+        <textarea matInput [(ngModel)]="formularios" name="formularios"></textarea>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="full-width" appearance="outline">
+      <mat-label>CID-10</mat-label>
+      <input matInput [(ngModel)]="cid10" name="cid10">
+    </mat-form-field>
+
+    <div class="buttons">
+      <button mat-raised-button class="cancel-btn" (click)="cancelarAtendimento()">Cancelar</button>
+      <button mat-raised-button class="custom-btn" (click)="salvarAtendimento()">Salvar</button>
+    </div>
+  </form>
+</div>

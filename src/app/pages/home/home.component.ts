@@ -3,6 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { AgendamentoModalComponent } from '../home/agendamento-modal/agendamento-modal.component';
 import { Agendamento, AgendamentoService } from '../../services/agendamento.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-home',
@@ -36,9 +38,14 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  iniciarAtendimento(agendamento: any): void {
-    this.router.navigate(['/atendimento'], { queryParams: { id: agendamento.id } });
+  iniciarAtendimento(agendamento: Agendamento): void {
+    this.router.navigate(['/atendimento'], { queryParams: { 
+      id: agendamento.id, 
+      nome: agendamento.nome, 
+      idade: agendamento.idade 
+    }});
   }
+  
 
   abrirModalAgendamento(agendamento?: Agendamento): void {
     if (!this.selected && !agendamento) {
@@ -71,12 +78,27 @@ export class HomeComponent implements OnInit {
       return;
     }
   
-    const confirmacao = window.confirm('Tem certeza que deseja excluir este agendamento?');
-  
-    if (confirmacao) {
-      this.excluirAgendamento(id);
-    }
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: 'Esta ação não pode ser desfeita!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.excluirAgendamento(id);
+        Swal.fire(
+          'Excluído!',
+          'O agendamento foi removido com sucesso.',
+          'success'
+        );
+      }
+    });
   }
+  
   
 
   excluirAgendamento(id: string): void {
