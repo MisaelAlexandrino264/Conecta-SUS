@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AtendimentoService, Atendimento } from '../../services/atendimento.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-atendimento',
@@ -10,6 +12,7 @@ export class AtendimentoComponent implements OnInit {
   id: string | null = null;
   nome: string = '';
   idade: number | null = null;
+  data: string = ''; 
 
   anamnese: string = '';
   exameFisico: string = '';
@@ -19,35 +22,84 @@ export class AtendimentoComponent implements OnInit {
   formularios: string = '';
   cid10: string = '';
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private atendimentoService: AtendimentoService
+  ) {}
 
   ngOnInit(): void {
-    // Recupera os parâmetros da URL
     this.route.queryParams.subscribe(params => {
-      this.id = params['id'];
-      this.nome = params['nome'];
-      this.idade = params['idade'];
+      console.log('Parâmetros recebidos:', params); // Debug para ver os dados
+      this.id = params['id'] || null;
+      this.nome = params['nome'] || 'Desconhecido';
+      this.idade = params['idade'] ? Number(params['idade']) : null;
+      this.data = params['data'] || ''; // Garante que a data seja carregada
     });
   }
+  
 
-  salvarAtendimento(): void {
-    console.log('Atendimento salvo:', {
+  async salvarAtendimento(): Promise<void> {
+    console.log('Tentando salvar atendimento:', {
       id: this.id,
       nome: this.nome,
       idade: this.idade,
+      data: this.data,
       anamnese: this.anamnese,
       exameFisico: this.exameFisico,
       solicitacaoExames: this.solicitacaoExames,
       orientacao: this.orientacao,
       prescricao: this.prescricao,
       formularios: this.formularios,
-      cid10: this.cid10
+      cid10: this.cid10,
     });
-    alert('Atendimento salvo com sucesso!');
+  
+    if (!this.id || !this.nome || !this.data) {
+      alert('Erro ao salvar o atendimento: Dados incompletos.');
+      return;
+    }
+  
+    const atendimento: Atendimento = {
+      nome: this.nome,
+      idade: this.idade!,
+      data: this.data,
+      anamnese: this.anamnese,
+      exameFisico: this.exameFisico,
+      solicitacaoExames: this.solicitacaoExames,
+      orientacao: this.orientacao,
+      prescricao: this.prescricao,
+      formularios: this.formularios,
+      cid10: this.cid10,
+      status: 'Finalizado'
+    };
+  
+    await this.atendimentoService.salvarAtendimento(atendimento);
+    await this.atendimentoService.marcarAtendimentoComoRealizado(this.id);
+  
+    //alert('Atendimento salvo com sucesso!');
     this.router.navigate(['/home']);
+    Swal.fire(
+              'Finalizado!',
+              'Atendimento realizado com sucesso.',
+              'success'
+            );
   }
+  
 
   cancelarAtendimento(): void {
-    this.router.navigate(['/home']);
+    Swal.fire({
+          title: 'Voltar para Início?',
+          text: 'Esta ação não pode ser desfeita!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sim, voltar!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+              if (result.isConfirmed) {
+                this.router.navigate(['/home']);
+              }
+            });
   }
 }

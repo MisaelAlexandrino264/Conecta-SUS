@@ -2,15 +2,22 @@
   max-width: 800px;
   margin: auto;
   padding: 20px;
-  margin-top: 60px; /* Maior espaçamento abaixo do menu */
-  background-color: #ffffff; /* Fundo branco */
+  margin-top: 80px; 
+  background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+
+.header {
+  text-align: left;
+  margin-bottom: 10px;
+  padding-left: 10px; 
+}
+
 h2 {
-  text-align: center;
-  margin-bottom: 15px;
+  margin: 0;
+  font-size: 22px;
   color: #333;
 }
 
@@ -24,19 +31,18 @@ h2 {
   font-weight: bold;
 }
 
-/* Organização das linhas dos inputs */
+
 .input-row {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
 }
 
-/* Define tamanho fixo para inputs lado a lado */
+
 .half-width {
   width: 48%;
 }
 
-/* Ajusta todos os campos */
 mat-form-field {
   display: block;
   width: 100%;
@@ -49,7 +55,7 @@ mat-form-field {
 }
 
 textarea {
-  min-height: 90px !important; /* Mantém altura maior para inputs grandes */
+  min-height: 90px !important;
   font-size: 16px;
   padding: 10px;
   resize: none;
@@ -60,17 +66,17 @@ input {
   padding: 10px;
 }
 
-/* Estilização dos botões */
+
 .buttons {
   display: flex;
-  justify-content: flex-end; /* Alinha os botões à direita */
+  justify-content: flex-end; 
   gap: 10px;
   margin-top: 20px;
 }
 
 .custom-btn, .cancel-btn {
-  width: 120px; /* Botões menores */
-  height: 40px; /* Ajuste na altura */
+  width: 120px;
+  height: 40px;
   font-size: 14px;
 }
 

@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
     if (data) {
       this.agendamentoService.obterMeusAgendamentosPorData(data).subscribe((agendamentos) => {
         this.agendamentos = agendamentos.sort((a, b) => {
-          return a.hora.localeCompare(b.hora); // Ordena por horário (ordem crescente)
+          return a.hora.localeCompare(b.hora); 
         });
       });
     }
@@ -42,7 +42,8 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/atendimento'], { queryParams: { 
       id: agendamento.id, 
       nome: agendamento.nome, 
-      idade: agendamento.idade 
+      idade: agendamento.idade,
+      data: agendamento.data 
     }});
   }
   
