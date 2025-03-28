@@ -30,6 +30,9 @@ import { AgendamentoModalComponent } from './pages/home/agendamento-modal/agenda
 import { AtendimentoComponent } from './pages/atendimento/atendimento.component';
 
 import { MatIconModule } from '@angular/material/icon';
+import { PacientesComponent } from './pages/pacientes/pacientes.component';
+import { CadastroPacienteComponent } from './pages/pacientes/cadastro-paciente/cadastro-paciente.component';
+
 
 @NgModule({
   declarations: [
@@ -39,7 +42,9 @@ import { MatIconModule } from '@angular/material/icon';
     HomeComponent,
     MenuComponent,
     AgendamentoModalComponent,
-    AtendimentoComponent
+    AtendimentoComponent,
+    PacientesComponent,
+    CadastroPacienteComponent,
   ],
   imports: [
     BrowserModule,

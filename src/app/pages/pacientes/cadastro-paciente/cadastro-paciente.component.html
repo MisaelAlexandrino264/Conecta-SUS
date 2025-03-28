@@ -1,0 +1,84 @@
+<h2 class="modal-title">Cadastro de Paciente</h2>
+
+<div class="compact-form">
+  <h3 class="section-title">Dados Pessoais</h3>
+  <!-- Linha 1 -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Nome</mat-label>
+      <input matInput>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field small">
+      <mat-label>Data Nasc.</mat-label>
+      <input matInput type="date">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field small">
+      <mat-label>CPF</mat-label>
+      <input matInput>
+    </mat-form-field>
+  </div>
+
+  <!-- Linha 2 -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field small">
+      <mat-label>Nº SUS</mat-label>
+      <input matInput>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field small">
+      <mat-label>Telefone</mat-label>
+      <input matInput>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>E-mail</mat-label>
+      <input matInput type="email">
+    </mat-form-field>
+  </div>
+  <h3 class="section-title">Endereço</h3>
+  <!-- Linha 3 -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field small">
+      <mat-label>CEP</mat-label>
+      <input matInput>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Cidade</mat-label>
+      <input matInput>
+    </mat-form-field>
+  </div>
+
+  <!-- Linha 4 -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Rua</mat-label>
+      <input matInput>
+    </mat-form-field>
+  </div>
+
+  <!-- Linha 5 -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="form-field small">
+      <mat-label>Bairro</mat-label>
+      <input matInput>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field x-small">
+      <mat-label>Nº</mat-label>
+      <input matInput>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Complemento</mat-label>
+      <input matInput>
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="modal-actions">
+  <button mat-stroked-button (click)="fechar()">Cancelar</button>
+  <button mat-raised-button class="custom-btn">Salvar</button>
+</div>
