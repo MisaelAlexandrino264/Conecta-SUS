@@ -48,11 +48,13 @@ export class PacienteService {
     return this.pacientesCollection.doc<Paciente>(id).valueChanges();
   }
 
-  atualizarPaciente(id: string, paciente: Paciente): Promise<void> {
-    return this.pacientesCollection.doc(id).update(paciente);
-  }
+  atualizarPaciente(id: string, paciente: Paciente) {
+    return this.firestore.collection('pacientes').doc(id).update(paciente);
+  }  
 
-  deletarPaciente(id: string): Promise<void> {
-    return this.pacientesCollection.doc(id).delete();
+  deletarPaciente(id: string) {
+    return this.firestore.collection('pacientes').doc(id).delete();
   }
+  
+
 }

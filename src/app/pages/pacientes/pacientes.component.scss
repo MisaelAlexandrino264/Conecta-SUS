@@ -11,3 +11,30 @@
   
   }
   
+  table {
+    width: 100%;
+  }
+  
+  .mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  td, th {
+    padding: 8px;
+  }
+  .edit-icon, .delete-icon {
+    cursor: pointer;
+    font-size: 24px;
+    transition: transform 0.2s;
+  }
+  
+  .edit-icon:hover {
+    color: #1976d2;
+    transform: scale(1.2);
+  }
+  
+  .delete-icon:hover {
+    color: red;
+    transform: scale(1.2);
+  }

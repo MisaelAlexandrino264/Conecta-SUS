@@ -52,4 +52,5 @@ export class CadastroPacienteComponent {
       this.snackBar.open('Preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
     }
   }
+  
 }
