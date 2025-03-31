@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
@@ -9,29 +9,42 @@ import { PacienteService, Paciente } from '../../../services/paciente.service';
   templateUrl: './cadastro-paciente.component.html',
   styleUrls: ['./cadastro-paciente.component.scss']
 })
-export class CadastroPacienteComponent {
+export class CadastroPacienteComponent implements OnInit {
   pacienteForm: FormGroup;
+  isEditMode: boolean = false;
+  pacienteId?: string; // Para armazenar o ID do paciente quando estamos editando
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<CadastroPacienteComponent>,
     private pacienteService: PacienteService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: { paciente: Paciente } // Recebe o paciente passado pelo diálogo
   ) {
     this.pacienteForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
       dataNascimento: ['', Validators.required],
-      cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]], // 11 dígitos
-      numeroSus: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]], // 15 dígitos
-      telefone: ['', [Validators.required, Validators.pattern(/^\d{10,11}$/)]], // 10 ou 11 dígitos
+      cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+      numeroSus: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+      telefone: ['', [Validators.required, Validators.pattern(/^\d{10,11}$/)]],
       email: ['', [Validators.required, Validators.email]],
-      cep: ['', [Validators.required, Validators.minLength(5)]], // 8 dígitos
+      cep: ['', [Validators.required, Validators.minLength(5)]],
       cidade: ['', [Validators.required, Validators.minLength(2)]],
       rua: ['', [Validators.required, Validators.minLength(3)]],
       bairro: ['', [Validators.required, Validators.minLength(3)]],
-      numero: ['', [Validators.required, Validators.pattern(/^\d+$/)]], // Apenas números
+      numero: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       complemento: ['']
     });
+  }
+
+  ngOnInit(): void {
+    if (this.data && this.data.paciente) {
+      this.isEditMode = true;
+      this.pacienteId = this.data.paciente.id; // Armazena o ID do paciente
+
+      // Preenche o formulário com os dados do paciente para edição
+      this.pacienteForm.patchValue(this.data.paciente);
+    }
   }
 
   fechar() {
@@ -41,16 +54,26 @@ export class CadastroPacienteComponent {
   salvar() {
     if (this.pacienteForm.valid) {
       const paciente: Paciente = this.pacienteForm.value;
-      
-      this.pacienteService.criarPaciente(paciente)
-        .then(() => {
-          this.snackBar.open('Paciente cadastrado com sucesso!', 'Fechar', { duration: 3000 });
-          this.fechar();
-        })
-        .catch((error) => console.error('Erro ao salvar paciente:', error));
+
+      if (this.isEditMode && this.pacienteId) {
+        // Atualiza o paciente existente
+        this.pacienteService.atualizarPaciente(this.pacienteId, paciente)
+          .then(() => {
+            this.snackBar.open('Paciente atualizado com sucesso!', 'Fechar', { duration: 3000 });
+            this.fechar();
+          })
+          .catch((error) => console.error('Erro ao atualizar paciente:', error));
+      } else {
+        // Cria um novo paciente
+        this.pacienteService.criarPaciente(paciente)
+          .then(() => {
+            this.snackBar.open('Paciente cadastrado com sucesso!', 'Fechar', { duration: 3000 });
+            this.fechar();
+          })
+          .catch((error) => console.error('Erro ao salvar paciente:', error));
+      }
     } else {
       this.snackBar.open('Preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
     }
   }
-  
 }

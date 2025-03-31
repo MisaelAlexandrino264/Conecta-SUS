@@ -51,11 +51,11 @@ export class PacientesComponent implements OnInit {
       panelClass: 'modal-container',
       data: { paciente } // Passa o paciente como dado para o diálogo
     });
-
+  
     dialogRef.afterClosed().subscribe(() => {
       this.carregarPacientes(); // Recarrega a lista após editar
     });
-  }
+  }  
 
   deletarPaciente(paciente: Paciente) {
     if (paciente.id) {
