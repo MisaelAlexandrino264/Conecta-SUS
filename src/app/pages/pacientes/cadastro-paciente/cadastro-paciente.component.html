@@ -1,84 +1,115 @@
 <h2 class="modal-title">Cadastro de Paciente</h2>
 
-<div class="compact-form">
+<form [formGroup]="pacienteForm" (ngSubmit)="salvar()" class="compact-form">
   <h3 class="section-title">Dados Pessoais</h3>
-  <!-- Linha 1 -->
+
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Nome</mat-label>
-      <input matInput>
+      <input matInput formControlName="nome">
+      <mat-error *ngIf="pacienteForm.get('nome')?.invalid && pacienteForm.get('nome')?.touched">
+        Nome é obrigatório.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>Data Nasc.</mat-label>
-      <input matInput type="date">
+      <input matInput type="date" formControlName="dataNascimento">
+      <mat-error *ngIf="pacienteForm.get('dataNascimento')?.invalid && pacienteForm.get('dataNascimento')?.touched">
+        Data de nascimento é obrigatória.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>CPF</mat-label>
-      <input matInput>
+      <input matInput formControlName="cpf">
+      <mat-error *ngIf="pacienteForm.get('cpf')?.invalid && pacienteForm.get('cpf')?.touched">
+        CPF inválido.
+      </mat-error>
     </mat-form-field>
   </div>
 
-  <!-- Linha 2 -->
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>Nº SUS</mat-label>
-      <input matInput>
+      <input matInput formControlName="numeroSus">
+      <mat-error *ngIf="pacienteForm.get('numeroSus')?.invalid && pacienteForm.get('numeroSus')?.touched">
+        Número SUS inválido.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>Telefone</mat-label>
-      <input matInput>
+      <input matInput formControlName="telefone">
+      <mat-error *ngIf="pacienteForm.get('telefone')?.invalid && pacienteForm.get('telefone')?.touched">
+        Telefone inválido.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>E-mail</mat-label>
-      <input matInput type="email">
+      <input matInput formControlName="email">
+      <mat-error *ngIf="pacienteForm.get('email')?.invalid && pacienteForm.get('email')?.touched">
+        E-mail inválido.
+      </mat-error>
     </mat-form-field>
   </div>
+
   <h3 class="section-title">Endereço</h3>
-  <!-- Linha 3 -->
+
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>CEP</mat-label>
-      <input matInput>
+      <input matInput formControlName="cep">
+      <mat-error *ngIf="pacienteForm.get('cep')?.invalid && pacienteForm.get('cep')?.touched">
+        CEP inválido.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Cidade</mat-label>
-      <input matInput>
+      <input matInput formControlName="cidade">
+      <mat-error *ngIf="pacienteForm.get('cidade')?.invalid && pacienteForm.get('cidade')?.touched">
+        Cidade é obrigatória.
+      </mat-error>
     </mat-form-field>
   </div>
 
-  <!-- Linha 4 -->
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Rua</mat-label>
-      <input matInput>
+      <input matInput formControlName="rua">
+      <mat-error *ngIf="pacienteForm.get('rua')?.invalid && pacienteForm.get('rua')?.touched">
+        Rua é obrigatória.
+      </mat-error>
     </mat-form-field>
   </div>
 
-  <!-- Linha 5 -->
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>Bairro</mat-label>
-      <input matInput>
+      <input matInput formControlName="bairro">
+      <mat-error *ngIf="pacienteForm.get('bairro')?.invalid && pacienteForm.get('bairro')?.touched">
+        Bairro é obrigatório.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field x-small">
       <mat-label>Nº</mat-label>
-      <input matInput>
+      <input matInput formControlName="numero">
+      <mat-error *ngIf="pacienteForm.get('numero')?.invalid && pacienteForm.get('numero')?.touched">
+        Número é obrigatório.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Complemento</mat-label>
-      <input matInput>
+      <input matInput formControlName="complemento">
     </mat-form-field>
   </div>
-</div>
 
-<div class="modal-actions">
-  <button mat-stroked-button (click)="fechar()">Cancelar</button>
-  <button mat-raised-button class="custom-btn">Salvar</button>
-</div>
+  <div class="modal-actions">
+    <button mat-stroked-button (click)="fechar()">Cancelar</button>
+    <button mat-raised-button class="custom-btn" type="submit">Salvar</button>
+  </div>
+</form>

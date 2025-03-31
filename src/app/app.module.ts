@@ -33,6 +33,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { PacientesComponent } from './pages/pacientes/pacientes.component';
 import { CadastroPacienteComponent } from './pages/pacientes/cadastro-paciente/cadastro-paciente.component';
 
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
 
 @NgModule({
   declarations: [
@@ -61,7 +63,8 @@ import { CadastroPacienteComponent } from './pages/pacientes/cadastro-paciente/c
     MatNativeDateModule,
     MatDialogModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    MatSnackBarModule 
   ],
   providers: [
     provideAnimationsAsync(),
