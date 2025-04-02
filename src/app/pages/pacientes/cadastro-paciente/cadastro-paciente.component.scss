@@ -1,6 +1,6 @@
 .modal-container {
-    width: 850px;  // Largo mas não máximo
-    max-height: 75vh; // Altura controlada
+    width: 850px;  
+    max-height: 75vh; 
     padding: 15px 30px;
     overflow-y: auto; // Scroll se necessário
   }
@@ -15,13 +15,13 @@
   .compact-form {
     display: flex;
     flex-direction: column;
-    gap: 8px; // Espaçamento mínimo entre linhas
+    gap: 8px; 
      padding: 0 10px;   
   }
   
   .form-row {
     display: flex;
-    gap: 10px; // Espaçamento entre campos
+    gap: 10px; 
     align-items: flex-start;
   }
   
@@ -35,7 +35,6 @@
     }
   }
   
-  // Ajustes para campos compactos
   mat-form-field {
     .mat-form-field-wrapper {
       padding-bottom: 0;
@@ -70,7 +69,7 @@
 
   .modal-container {
     position: relative;
-    padding-bottom: 60px; // Espaço reservado para os botões fixos
+    padding-bottom: 60px; 
   }
   
   .fixed-actions {

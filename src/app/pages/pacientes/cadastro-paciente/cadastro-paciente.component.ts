@@ -12,14 +12,14 @@ import { PacienteService, Paciente } from '../../../services/paciente.service';
 export class CadastroPacienteComponent implements OnInit {
   pacienteForm: FormGroup;
   isEditMode: boolean = false;
-  pacienteId?: string; // Para armazenar o ID do paciente quando estamos editando
+  pacienteId?: string; 
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<CadastroPacienteComponent>,
     private pacienteService: PacienteService,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { paciente: Paciente } // Recebe o paciente passado pelo diálogo
+    @Inject(MAT_DIALOG_DATA) public data: { paciente: Paciente } 
   ) {
     this.pacienteForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -27,6 +27,7 @@ export class CadastroPacienteComponent implements OnInit {
       cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
       numeroSus: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
       telefone: ['', [Validators.required, Validators.pattern(/^\d{10,11}$/)]],
+      sexo: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       cep: ['', [Validators.required, Validators.minLength(5)]],
       cidade: ['', [Validators.required, Validators.minLength(2)]],
@@ -40,9 +41,8 @@ export class CadastroPacienteComponent implements OnInit {
   ngOnInit(): void {
     if (this.data && this.data.paciente) {
       this.isEditMode = true;
-      this.pacienteId = this.data.paciente.id; // Armazena o ID do paciente
+      this.pacienteId = this.data.paciente.id;
 
-      // Preenche o formulário com os dados do paciente para edição
       this.pacienteForm.patchValue(this.data.paciente);
     }
   }
@@ -56,7 +56,6 @@ export class CadastroPacienteComponent implements OnInit {
       const paciente: Paciente = this.pacienteForm.value;
 
       if (this.isEditMode && this.pacienteId) {
-        // Atualiza o paciente existente
         this.pacienteService.atualizarPaciente(this.pacienteId, paciente)
           .then(() => {
             this.snackBar.open('Paciente atualizado com sucesso!', 'Fechar', { duration: 3000 });
@@ -64,7 +63,6 @@ export class CadastroPacienteComponent implements OnInit {
           })
           .catch((error) => console.error('Erro ao atualizar paciente:', error));
       } else {
-        // Cria um novo paciente
         this.pacienteService.criarPaciente(paciente)
           .then(() => {
             this.snackBar.open('Paciente cadastrado com sucesso!', 'Fechar', { duration: 3000 });

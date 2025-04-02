@@ -5,6 +5,7 @@ import { PacienteService, Paciente } from '../../services/paciente.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-pacientes',
@@ -49,25 +50,51 @@ export class PacientesComponent implements OnInit {
   editarPaciente(paciente: Paciente) {
     const dialogRef = this.dialog.open(CadastroPacienteComponent, {
       panelClass: 'modal-container',
-      data: { paciente } // Passa o paciente como dado para o diálogo
+      data: { paciente } 
     });
   
     dialogRef.afterClosed().subscribe(() => {
-      this.carregarPacientes(); // Recarrega a lista após editar
+      this.carregarPacientes(); 
     });
   }  
 
   deletarPaciente(paciente: Paciente) {
     if (paciente.id) {
-      this.pacienteService.deletarPaciente(paciente.id).then(() => {
-        alert('Paciente deletado com sucesso!');
-        this.carregarPacientes();
-      }).catch(error => {
-        console.error('Erro ao deletar paciente:', error);
+      Swal.fire({
+        title: 'Tem certeza que deseja excluir?',
+        text: 'Esta ação não pode ser desfeita!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sim, excluir!',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.pacienteService.deletarPaciente(paciente.id!) 
+            .then(() => {
+              Swal.fire(
+                'Excluído!',
+                'O paciente foi removido com sucesso.',
+                'success'
+              );
+              this.carregarPacientes();
+            })
+            .catch(error => {
+              console.error('Erro ao deletar paciente:', error);
+              Swal.fire(
+                'Erro!',
+                'Ocorreu um erro ao tentar deletar o paciente.',
+                'error'
+              );
+            });
+        }
       });
     } else {
       console.error('Paciente não possui um ID válido.');
     }
   }
+  
+  
   
 }

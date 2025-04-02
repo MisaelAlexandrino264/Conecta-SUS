@@ -40,6 +40,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -74,7 +75,9 @@ import { MatSortModule } from '@angular/material/sort';
     BrowserAnimationsModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule 
+    MatSortModule,
+    MatSelectModule
+    
   ],
   providers: [
     provideAnimationsAsync(),
