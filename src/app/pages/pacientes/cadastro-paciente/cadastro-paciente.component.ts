@@ -76,4 +76,30 @@ export class CadastroPacienteComponent implements OnInit {
       this.snackBar.open('Preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
     }
   }
+
+  buscarCEP(): void {
+    const cep = this.pacienteForm.get('cep')?.value.replace(/\D/g, '');
+    if (cep?.length === 8) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+        .then(res => res.json())
+        .then(dados => {
+          if (!dados.erro) {
+            this.pacienteForm.patchValue({
+              rua: dados.logradouro,
+              bairro: dados.bairro,
+              cidade: dados.localidade,
+              estado: dados.uf
+            });
+          } else {
+            this.snackBar.open('CEP não encontrado.', 'Fechar', { duration: 3000 });
+          }
+        })
+        .catch(() => {
+          this.snackBar.open('Erro ao buscar o CEP. Tente novamente.', 'Fechar', { duration: 3000 });
+        });
+    }
+  }
+  
+
+  
 }

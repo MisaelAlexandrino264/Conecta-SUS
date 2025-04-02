@@ -12,7 +12,7 @@ import { MatSort } from '@angular/material/sort';
   styleUrls: ['./pacientes.component.scss']
 })
 export class PacientesComponent implements OnInit {
-  displayedColumns: string[] = ['nome', 'cpf', 'telefone', 'email', 'acoes'];
+  displayedColumns: string[] = ['nome', 'dataNascimento', 'telefone', 'acoes'];
   dataSource = new MatTableDataSource<Paciente>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

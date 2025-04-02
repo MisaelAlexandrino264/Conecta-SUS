@@ -67,3 +67,22 @@
       color: #fff !important;
     }
   }
+
+  .modal-container {
+    position: relative;
+    padding-bottom: 60px; // Espaço reservado para os botões fixos
+  }
+  
+  .fixed-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 30px;
+    background-color: white;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #eee;
+    z-index: 10;
+  }
+  

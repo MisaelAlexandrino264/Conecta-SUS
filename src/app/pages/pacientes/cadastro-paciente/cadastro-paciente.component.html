@@ -60,12 +60,12 @@
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>CEP</mat-label>
-      <input matInput formControlName="cep">
+      <input matInput formControlName="cep" (blur)="buscarCEP()">
       <mat-error *ngIf="pacienteForm.get('cep')?.invalid && pacienteForm.get('cep')?.touched">
         CEP inválido.
       </mat-error>
     </mat-form-field>
-
+  
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Cidade</mat-label>
       <input matInput formControlName="cidade">
@@ -74,7 +74,7 @@
       </mat-error>
     </mat-form-field>
   </div>
-
+  
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field">
       <mat-label>Rua</mat-label>
@@ -84,7 +84,7 @@
       </mat-error>
     </mat-form-field>
   </div>
-
+  
   <div class="form-row">
     <mat-form-field appearance="outline" class="form-field small">
       <mat-label>Bairro</mat-label>
@@ -93,7 +93,9 @@
         Bairro é obrigatório.
       </mat-error>
     </mat-form-field>
+  </div>
 
+  <div class="form-row">
     <mat-form-field appearance="outline" class="form-field x-small">
       <mat-label>Nº</mat-label>
       <input matInput formControlName="numero">
@@ -106,10 +108,15 @@
       <mat-label>Complemento</mat-label>
       <input matInput formControlName="complemento">
     </mat-form-field>
-  </div>
-
-  <div class="modal-actions">
-    <button mat-stroked-button (click)="fechar()">Cancelar</button>
-    <button mat-raised-button class="custom-btn" type="submit">Salvar</button>
+    <div class="modal-actions">
+      <button mat-stroked-button (click)="fechar()">Cancelar</button>
+      <button mat-raised-button class="custom-btn" type="submit">Salvar</button>
+    </div>
   </div>
 </form>
+
+  <!--<div class="modal-actions">
+    <button mat-stroked-button (click)="fechar()">Cancelar</button>
+    <button mat-raised-button class="custom-btn" type="submit">Salvar</button>
+  </div>-->
+
