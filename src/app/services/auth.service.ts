@@ -24,7 +24,7 @@ export class AuthService {
   }
   
 
-  async register(email: string, password: string, departamento: string, nome: string) {
+  async register(email: string, password: string, departamento: string, nome: string, tipo: string) { // Adicionado `tipo`
     try {
       const userCredential = await this.afAuth.createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
@@ -36,7 +36,8 @@ export class AuthService {
           uid: user.uid,
           email: user.email,
           departamento: departamento,
-          nome: nome
+          nome: nome,
+          tipo: tipo // Salva o tipo do usuário
         });
   
         this.router.navigate(['/home']);
@@ -48,6 +49,7 @@ export class AuthService {
       this.handleAuthError(error);
     }
   }
+  
   
   async logout() {
     await this.afAuth.signOut();

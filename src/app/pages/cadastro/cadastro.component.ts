@@ -17,18 +17,13 @@ export class CadastroComponent {
       email: ['', [Validators.required, Validators.email]],
       nome: ['', Validators.required],
       departamento: ['', Validators.required],
+      tipo: ['', Validators.required],  // Adicionado aqui
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     });
 
-    // Monitorando mudanças nos campos de senha
-    this.cadastroForm.get('password')?.valueChanges.subscribe(() => {
-      this.verificarSenha();
-    });
-
-    this.cadastroForm.get('confirmPassword')?.valueChanges.subscribe(() => {
-      this.verificarSenha();
-    });
+    this.cadastroForm.get('password')?.valueChanges.subscribe(() => this.verificarSenha());
+    this.cadastroForm.get('confirmPassword')?.valueChanges.subscribe(() => this.verificarSenha());
   }
 
   verificarSenha() {
@@ -52,7 +47,7 @@ export class CadastroComponent {
       return;
     }
 
-    const { email, password, departamento, nome } = this.cadastroForm.value;
-    this.authService.register(email, password, departamento, nome);
+    const { email, password, departamento, nome, tipo } = this.cadastroForm.value; // Adicionado `tipo`
+    this.authService.register(email, password, departamento, nome, tipo); // Adicionado `tipo`
   }
 }

@@ -21,6 +21,18 @@
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width" floatLabel="always">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="tipo">
+          <mat-option value="Profissional da saúde">Profissional da saúde</mat-option>
+          <mat-option value="Secretaria">Secretária</mat-option>
+        </mat-select>
+        <mat-error *ngIf="cadastroForm.controls['tipo'].invalid && cadastroForm.controls['tipo'].touched">
+          Por favor, selecione um tipo.
+        </mat-error>
+      </mat-form-field>
+      
+
+      <mat-form-field appearance="fill" class="full-width" floatLabel="always">
         <mat-label>Departamento</mat-label>
         <input matInput formControlName="departamento" type="text">
         <mat-error *ngIf="cadastroForm.controls['departamento'].invalid && cadastroForm.controls['departamento'].touched">
