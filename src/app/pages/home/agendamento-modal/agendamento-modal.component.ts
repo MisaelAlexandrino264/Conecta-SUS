@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendamentoService, Agendamento } from '../../../services/agendamento.service';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
+import { ProfissionalService, Profissional } from '../../../services/profissional.service'; // Novo import
 
 @Component({
   selector: 'app-agendamento-modal',
@@ -13,14 +14,16 @@ export class AgendamentoModalComponent implements OnInit {
   nome: string = '';
   idade: number | null = null;
   id?: string; 
-
+  profissionalNome: string = ''; // Nome do profissional selecionado
   pacientesFiltrados: Paciente[] = [];  
+  profissionaisFiltrados: Profissional[] = []; // Lista filtrada de profissionais
 
   constructor(
     public dialogRef: MatDialogRef<AgendamentoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { dataSelecionada: Date, agendamento?: Agendamento },
     private agendamentoService: AgendamentoService,
-    private pacienteService: PacienteService
+    private pacienteService: PacienteService,
+    private profissionalService: ProfissionalService // Injetando o serviço
   ) {}
 
   ngOnInit(): void {
@@ -29,6 +32,7 @@ export class AgendamentoModalComponent implements OnInit {
       this.nome = this.data.agendamento.nome;
       this.idade = this.data.agendamento.idade;
       this.id = this.data.agendamento.id;
+      this.profissionalNome = this.data.agendamento.profissionalNome || ''; // Carregar nome do profissional, se existir
     }
   }
 
@@ -43,20 +47,34 @@ export class AgendamentoModalComponent implements OnInit {
     });
   }
 
+  buscarProfissionais(nome: string): void {
+    if (nome.length < 2) {
+      this.profissionaisFiltrados = [];
+      return;
+    }
+  
+    this.profissionalService.buscarProfissionaisPorNome(nome).subscribe(profissionais => {
+      console.log('Profissionais filtrados recebidos:', profissionais); // ✅ Verificar se os dados aparecem aqui
+      this.profissionaisFiltrados = profissionais;
+    });
+  }
+  
+
   selecionarPaciente(option: any): void {
     const pacienteSelecionado = this.pacientesFiltrados.find(p => p.nome === option.value);
   
     if (pacienteSelecionado) {
       this.nome = pacienteSelecionado.nome;
-      this.idade = this.calcularIdade(pacienteSelecionado.dataNascimento); // Calcula a idade com base na data de nascimento
+      this.idade = this.calcularIdade(pacienteSelecionado.dataNascimento); 
     } else {
-      this.nome = ''; // Limpa o nome caso o paciente não seja encontrado
+      this.nome = ''; 
       this.idade = null;
     }
   }
-  
-  
-  
+
+  selecionarProfissional(nome: string): void {
+    this.profissionalNome = nome;
+  }
 
   calcularIdade(dataNascimento: string): number {
     const nascimento = new Date(dataNascimento);
@@ -70,19 +88,22 @@ export class AgendamentoModalComponent implements OnInit {
   }
 
   salvar(): void {
-    // Verifica se o nome digitado corresponde a um paciente da lista filtrada
     const pacienteValido = this.pacientesFiltrados.find(p => p.nome === this.nome);
+    const profissionalValido = this.profissionaisFiltrados.find(p => p.nome === this.profissionalNome);
   
     if (!pacienteValido) {
       alert("Selecione um paciente válido da lista!");
       return;
     }
   
-    // Calcula a idade do paciente válido
+    if (!profissionalValido) {
+      alert("Selecione um profissional válido da lista!");
+      return;
+    }
+  
     this.idade = this.calcularIdade(pacienteValido.dataNascimento);
   
-    // Agora sim, verifica os campos obrigatórios
-    if (!this.hora || !this.nome || this.idade === null) {
+    if (!this.hora || !this.nome || this.idade === null || !this.profissionalNome) {
       alert("Preencha todos os campos!");
       return;
     }
@@ -91,7 +112,8 @@ export class AgendamentoModalComponent implements OnInit {
       data: this.data.dataSelecionada.toISOString().split('T')[0],
       hora: this.hora,
       nome: this.nome,
-      idade: this.idade
+      idade: this.idade,
+      profissionalNome: this.profissionalNome
     };
   
     if (this.id) {
@@ -118,12 +140,14 @@ export class AgendamentoModalComponent implements OnInit {
     }
   }
   
-  
 
   onInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    const nome = inputElement.value;
+    const nome = (event.target as HTMLInputElement).value;
     this.buscarPacientes(nome);
   }
-  
+
+  onInputProfissional(event: Event): void {
+    const nome = (event.target as HTMLInputElement).value;
+    this.buscarProfissionais(nome);
+  }
 }

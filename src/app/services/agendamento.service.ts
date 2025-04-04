@@ -12,7 +12,8 @@ export interface Agendamento {
   hora: string;  
   nome: string;
   idade: number;
-  uid?: string;  
+  uid?: string;
+  profissionalNome?: string;
 }
 
 @Injectable({

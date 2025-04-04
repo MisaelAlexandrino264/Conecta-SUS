@@ -21,6 +21,25 @@
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
+
+  <!-- Input para buscar Profissional da Saúde -->
+<mat-form-field appearance="outline">
+  <mat-label>Profissional da Saúde</mat-label>
+  <input matInput 
+         [(ngModel)]="profissionalNome" 
+         [matAutocomplete]="autoProfissional" 
+         (input)="onInputProfissional($event)">
+  <mat-autocomplete #autoProfissional="matAutocomplete" 
+                    (optionSelected)="selecionarProfissional($event.option.value)">
+    <mat-option *ngFor="let profissional of profissionaisFiltrados" [value]="profissional.nome">
+      {{ profissional.nome }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+
+  
+
+
   
 
 <mat-dialog-actions align="end">
