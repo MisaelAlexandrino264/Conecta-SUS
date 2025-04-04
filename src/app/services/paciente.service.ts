@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export interface Paciente {
-  id?: string; // Opcional, pois o Firebase gera o ID automaticamente
+  id?: string;
   nome: string;
   dataNascimento: string;
   cpf: string;
@@ -55,6 +55,19 @@ export class PacienteService {
   deletarPaciente(id: string) {
     return this.firestore.collection('pacientes').doc(id).delete();
   }
-  
 
+  buscarPacientePorNome(nome: string): Observable<Paciente[]> {
+    const pacientesFiltrados = this.firestore.collection<Paciente>('pacientes', ref => 
+      ref.where('nome', '>=', nome)
+         .where('nome', '<=', nome + '\uf8ff')
+         .limit(10)
+    );
+    return pacientesFiltrados.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as Paciente;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
 }

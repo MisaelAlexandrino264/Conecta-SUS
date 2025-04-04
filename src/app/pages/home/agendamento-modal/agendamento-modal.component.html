@@ -6,21 +6,24 @@
     <mat-label>Hora</mat-label>
     <input matInput type="time" [(ngModel)]="hora">
   </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Buscar Paciente</mat-label>
+    <input
+      type="text"
+      matInput
+      [(ngModel)]="nome"
+      [matAutocomplete]="auto"
+      (input)="onInput($event)">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selecionarPaciente($event.option)">
+      <mat-option *ngFor="let paciente of pacientesFiltrados" [value]="paciente.nome">
+        {{ paciente.nome }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
   
-
-  <mat-form-field appearance="outline">
-    <mat-label>Nome</mat-label>
-    <input matInput [(ngModel)]="nome" placeholder="Nome do paciente">
-  </mat-form-field>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Idade</mat-label>
-    <input matInput type="number" [(ngModel)]="idade" placeholder="Idade do paciente">
-  </mat-form-field>
-</mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="fechar()">Cancelar</button>
   <button mat-raised-button class="custom-btn" (click)="salvar()">Salvar</button>
 </mat-dialog-actions>
-
