@@ -113,7 +113,8 @@ export class AgendamentoModalComponent implements OnInit {
       hora: this.hora,
       nome: this.nome,
       idade: this.idade,
-      profissionalNome: this.profissionalNome
+      profissionalNome: this.profissionalNome,
+      profissionalUid: profissionalValido.uid
     };
   
     if (this.id) {
