@@ -54,26 +54,39 @@ export class CadastroPacienteComponent implements OnInit {
   salvar() {
     if (this.pacienteForm.valid) {
       const paciente: Paciente = this.pacienteForm.value;
-
-      if (this.isEditMode && this.pacienteId) {
-        this.pacienteService.atualizarPaciente(this.pacienteId, paciente)
-          .then(() => {
-            this.snackBar.open('Paciente atualizado com sucesso!', 'Fechar', { duration: 3000 });
-            this.fechar();
-          })
-          .catch((error) => console.error('Erro ao atualizar paciente:', error));
-      } else {
-        this.pacienteService.criarPaciente(paciente)
-          .then(() => {
-            this.snackBar.open('Paciente cadastrado com sucesso!', 'Fechar', { duration: 3000 });
-            this.fechar();
-          })
-          .catch((error) => console.error('Erro ao salvar paciente:', error));
-      }
+      const cpf = paciente.cpf;
+  
+      this.pacienteService.buscarPorCPF(cpf).subscribe(pacientesComMesmoCPF => {
+        const isCpfDuplicado = pacientesComMesmoCPF.length > 0 &&
+          (!this.isEditMode || (this.isEditMode && pacientesComMesmoCPF[0].id !== this.pacienteId));
+  
+        if (isCpfDuplicado) {
+          this.snackBar.open('Já existe um paciente cadastrado com este CPF.', 'Fechar', { duration: 3000 });
+          return;
+        }
+  
+        if (this.isEditMode && this.pacienteId) {
+          this.pacienteService.atualizarPaciente(this.pacienteId, paciente)
+            .then(() => {
+              this.snackBar.open('Paciente atualizado com sucesso!', 'Fechar', { duration: 3000 });
+              this.fechar();
+            })
+            .catch((error) => console.error('Erro ao atualizar paciente:', error));
+        } else {
+          this.pacienteService.criarPaciente(paciente)
+            .then(() => {
+              this.snackBar.open('Paciente cadastrado com sucesso!', 'Fechar', { duration: 3000 });
+              this.fechar();
+            })
+            .catch((error) => console.error('Erro ao salvar paciente:', error));
+        }
+      });
     } else {
       this.snackBar.open('Preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
     }
   }
+  
+  
 
   buscarCEP(): void {
     const cep = this.pacienteForm.get('cep')?.value.replace(/\D/g, '');

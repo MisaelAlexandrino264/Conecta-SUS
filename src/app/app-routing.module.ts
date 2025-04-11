@@ -6,6 +6,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { AuthGuard } from '../app/auth.guard';
 import { AtendimentoComponent } from './pages/atendimento/atendimento.component';
 import { PacientesComponent } from './pages/pacientes/pacientes.component';
+import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] }, // Protegendo a rota home
   { path: 'atendimento', component: AtendimentoComponent, canActivate: [AuthGuard] },
   { path: 'pacientes', component: PacientesComponent, canActivate: [AuthGuard] },
+  { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

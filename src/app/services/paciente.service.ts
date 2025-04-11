@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
 
 export interface Paciente {
   id?: string;
@@ -70,4 +70,18 @@ export class PacienteService {
       }))
     );
   }
+
+
+buscarPorCPF(cpf: string): Observable<Paciente[]> {
+  const promise = this.pacientesCollection.ref.where('cpf', '==', cpf).get().then(snapshot => {
+    const pacientes: Paciente[] = [];
+    snapshot.forEach(doc => {
+      pacientes.push({ id: doc.id, ...(doc.data() as Paciente) });
+    });
+    return pacientes;
+  });
+
+  return from(promise);
+}
+
 }

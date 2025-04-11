@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -24,31 +25,33 @@ export class AuthService {
   }
   
 
-  async register(email: string, password: string, departamento: string, nome: string, tipo: string) { // Adicionado `tipo`
+  async registerInterno(email: string, password: string, departamento: string, nome: string, tipo: string): Promise<void> {
+    const { initializeApp } = await import('firebase/app');
+    const { getAuth, createUserWithEmailAndPassword } = await import('firebase/auth');
+    const app = initializeApp(environment.firebaseConfig, 'segundoApp'); // ✅ aqui corrigido
+    const secondAuth = getAuth(app);
+  
     try {
-      const userCredential = await this.afAuth.createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
+      const userCredential = await createUserWithEmailAndPassword(secondAuth, email, password);
+      const newUser = userCredential.user;
   
-      if (user) {
-        console.log("Usuário criado com sucesso:", user.uid); 
-  
-        await this.firestore.collection('users').doc(user.uid).set({
-          uid: user.uid,
-          email: user.email,
+      if (newUser) {
+        await this.firestore.collection('users').doc(newUser.uid).set({
+          uid: newUser.uid,
+          email: newUser.email,
           departamento: departamento,
           nome: nome,
-          tipo: tipo // Salva o tipo do usuário
+          tipo: tipo
         });
-  
-        this.router.navigate(['/home']);
-      } else {
-        throw new Error("Usuário não foi criado corretamente.");
+        alert('Usuário cadastrado com sucesso!');
       }
     } catch (error: any) {
-      console.error("Erro ao registrar:", error); 
-      this.handleAuthError(error);
+      console.error("Erro ao registrar novo usuário internamente:", error);
+      alert("Erro ao cadastrar o usuário: " + (error?.message || ''));
     }
   }
+  
+  
   
   
   async logout() {

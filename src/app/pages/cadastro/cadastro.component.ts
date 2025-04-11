@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cadastro',
@@ -12,7 +13,7 @@ export class CadastroComponent {
   senhaInvalida: boolean = false;
   formInvalido: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.cadastroForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       nome: ['', Validators.required],
@@ -39,15 +40,26 @@ export class CadastroComponent {
     }
   }
 
-  onSubmit() {
+  async onSubmit() {
     this.formInvalido = this.cadastroForm.invalid || this.senhaInvalida;
-
+  
     if (this.formInvalido) {
       this.cadastroForm.markAllAsTouched();
       return;
     }
+  
+    const { email, password, departamento, nome, tipo } = this.cadastroForm.value;
+  
+    try {
+      await this.authService.registerInterno(email, password, departamento, nome, tipo);
+      this.router.navigate(['/usuarios']); // Redireciona após o cadastro
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
+    }
+  }
+  
 
-    const { email, password, departamento, nome, tipo } = this.cadastroForm.value; // Adicionado `tipo`
-    this.authService.register(email, password, departamento, nome, tipo); // Adicionado `tipo`
+  cancelar() {
+    this.router.navigate(['/usuarios']);
   }
 }

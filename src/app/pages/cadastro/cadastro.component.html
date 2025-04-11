@@ -57,17 +57,24 @@
       </mat-form-field>
       
 
-      <p class="login-link">
-        Já tem uma conta? <a routerLink="/login">Faça login</a>
-      </p>
 
-      <button mat-raised-button color="accent" class="full-width" type="submit">
-        Cadastrar
-      </button>
+      <div class="button-group">
+
+        
+        <button mat-raised-button color="warn" type="button" (click)="cancelar()">
+          Cancelar
+        </button>
+      
+        <button mat-raised-button color="accent" type="submit">
+          Cadastrar
+        </button>
+      
+      </div>
       
       <mat-error *ngIf="formInvalido" class="error-message">
         Preencha todos os campos corretamente.
       </mat-error>
+      
       
     </form>
   </div>

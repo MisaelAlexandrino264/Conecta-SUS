@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendamentoService, Agendamento } from '../../../services/agendamento.service';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
-import { ProfissionalService, Profissional } from '../../../services/profissional.service'; // Novo import
+import { ProfissionalService, Profissional } from '../../../services/profissional.service'; 
 
 @Component({
   selector: 'app-agendamento-modal',
@@ -14,16 +14,16 @@ export class AgendamentoModalComponent implements OnInit {
   nome: string = '';
   idade: number | null = null;
   id?: string; 
-  profissionalNome: string = ''; // Nome do profissional selecionado
+  profissionalNome: string = ''; 
   pacientesFiltrados: Paciente[] = [];  
-  profissionaisFiltrados: Profissional[] = []; // Lista filtrada de profissionais
+  profissionaisFiltrados: Profissional[] = []; 
 
   constructor(
     public dialogRef: MatDialogRef<AgendamentoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { dataSelecionada: Date, agendamento?: Agendamento },
     private agendamentoService: AgendamentoService,
     private pacienteService: PacienteService,
-    private profissionalService: ProfissionalService // Injetando o serviço
+    private profissionalService: ProfissionalService 
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +32,7 @@ export class AgendamentoModalComponent implements OnInit {
       this.nome = this.data.agendamento.nome;
       this.idade = this.data.agendamento.idade;
       this.id = this.data.agendamento.id;
-      this.profissionalNome = this.data.agendamento.profissionalNome || ''; // Carregar nome do profissional, se existir
+      this.profissionalNome = this.data.agendamento.profissionalNome || ''; 
     }
   }
 
@@ -54,7 +54,7 @@ export class AgendamentoModalComponent implements OnInit {
     }
   
     this.profissionalService.buscarProfissionaisPorNome(nome).subscribe(profissionais => {
-      console.log('Profissionais filtrados recebidos:', profissionais); // ✅ Verificar se os dados aparecem aqui
+      console.log('Profissionais filtrados recebidos:', profissionais); 
       this.profissionaisFiltrados = profissionais;
     });
   }

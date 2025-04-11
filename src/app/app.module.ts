@@ -42,6 +42,7 @@ import { MatSortModule } from '@angular/material/sort';
 
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 
 
 @NgModule({
@@ -55,6 +56,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     AtendimentoComponent,
     PacientesComponent,
     CadastroPacienteComponent,
+    UsuariosComponent,
   ],
   imports: [
     BrowserModule,

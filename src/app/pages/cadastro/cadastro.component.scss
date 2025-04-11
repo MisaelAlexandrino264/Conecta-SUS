@@ -35,29 +35,28 @@
       font-weight: bold;
     }
   
-    button {
+    button[color="accent"] {
       background-color: #0d47a1;
       color: white;
+    
       &:hover {
         background-color: #1565c0;
       }
     }
-  
-    .login-link {
-      margin: 10px 0;
-      font-size: 0.9rem;
-      text-align: center;
-      color: #333;
+    
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
     }
-  
-    .login-link a {
-      color: #0d47a1;
-      text-decoration: none;
-      font-weight: bold;
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
     }
-  
-    .login-link a:hover {
-      text-decoration: underline;
-    }
+    
   }
   

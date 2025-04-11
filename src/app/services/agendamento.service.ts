@@ -37,8 +37,7 @@ export class AgendamentoService {
   
     const agendamentoComUid = {
       ...agendamento,
-      criadoPorUid: user.uid // salva quem criou
-      // mantém o profissionalUid que foi passado no agendamento
+      criadoPorUid: user.uid 
     };
   
     await addDoc(this.colecaoAgendamentos, agendamentoComUid)
