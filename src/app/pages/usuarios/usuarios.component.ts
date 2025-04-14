@@ -4,6 +4,7 @@ import { UsuarioService, Usuario } from '../../services/usuario.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-usuarios',
@@ -11,7 +12,7 @@ import { MatSort } from '@angular/material/sort';
   styleUrls: ['./usuarios.component.scss']
 })
 export class UsuariosComponent implements OnInit {
-  displayedColumns: string[] = ['nome', 'email', 'tipo', 'departamento'];
+  displayedColumns: string[] = ['nome', 'email', 'tipo', 'acoes'];
   dataSource = new MatTableDataSource<Usuario>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -35,4 +36,31 @@ export class UsuariosComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  editarUsuario(usuario: Usuario) {
+    this.router.navigate(['/cadastro'], { state: { usuario } });
+  }
+  
+  excluirUsuario(usuario: Usuario): void {
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: 'Deseja excluir este usuário? Essa ação não poderá ser desfeita.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    }).then(async (result) => {
+      if (result.isConfirmed && usuario.uid) {
+        try {
+          await this.usuarioService.excluirUsuario(usuario.uid);
+          Swal.fire('Excluído!', 'O usuário foi excluído do sistema.', 'success');
+        } catch (error) {
+          Swal.fire('Erro!', 'Erro ao excluir o usuário.', 'error');
+        }
+      }
+    });
+  }
+  
 }

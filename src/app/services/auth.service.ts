@@ -63,6 +63,19 @@ export class AuthService {
     return this.afAuth.authState; 
   }
 
+  async atualizarUsuario(uid: string, nome: string, tipo: string, departamento: string): Promise<void> {
+    try {
+      await this.firestore.collection('users').doc(uid).update({
+        nome,
+        tipo,
+        departamento
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar usuário no Firestore:', error);
+      throw error;
+    }
+  }
+  
 
   private handleAuthError(error: any) {
     console.error("Erro de autenticação:", error); 
