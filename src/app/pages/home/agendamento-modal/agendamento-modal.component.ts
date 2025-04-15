@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendamentoService, Agendamento } from '../../../services/agendamento.service';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
-import { ProfissionalService, Profissional } from '../../../services/profissional.service'; 
+import { ProfissionalService, Profissional } from '../../../services/profissional.service';
 
 @Component({
   selector: 'app-agendamento-modal',
@@ -10,40 +11,74 @@ import { ProfissionalService, Profissional } from '../../../services/profissiona
   styleUrls: ['./agendamento-modal.component.scss']
 })
 export class AgendamentoModalComponent implements OnInit {
-  hora: string = '';
-  nome: string = '';
+  agendamentoForm!: FormGroup;
+  pacientesFiltrados: Paciente[] = [];
+  profissionaisFiltrados: Profissional[] = [];
   idade: number | null = null;
-  id?: string; 
-  profissionalNome: string = ''; 
-  pacientesFiltrados: Paciente[] = [];  
-  profissionaisFiltrados: Profissional[] = []; 
+  id?: string;
 
   constructor(
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<AgendamentoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { dataSelecionada: Date, agendamento?: Agendamento },
     private agendamentoService: AgendamentoService,
     private pacienteService: PacienteService,
-    private profissionalService: ProfissionalService 
+    private profissionalService: ProfissionalService
   ) {}
 
   ngOnInit(): void {
+    this.agendamentoForm = this.fb.group({
+      hora: ['', Validators.required],
+      nome: ['', Validators.required],
+      profissionalNome: ['', Validators.required]
+    });
+  
     if (this.data.agendamento) {
-      this.hora = this.data.agendamento.hora;
-      this.nome = this.data.agendamento.nome;
+      const { hora, nome, profissionalNome } = this.data.agendamento;
       this.idade = this.data.agendamento.idade;
       this.id = this.data.agendamento.id;
-      this.profissionalNome = this.data.agendamento.profissionalNome || ''; 
+  
+      this.agendamentoForm.patchValue({ hora, nome, profissionalNome });
+  
+      // Carrega paciente para que o nome seja considerado válido
+      this.pacienteService.buscarPacientePorNome(nome).subscribe(pacientes => {
+        this.pacientesFiltrados = pacientes;
+  
+        this.agendamentoForm.get('nome')?.setValidators([
+          Validators.required,
+          this.pacienteValidoValidator(this.pacientesFiltrados)
+        ]);
+        this.agendamentoForm.get('nome')?.updateValueAndValidity();
+      });
+  
+      // Carrega profissional para que o nome seja considerado válido
+      this.profissionalService.buscarProfissionaisPorNome(profissionalNome || '').subscribe(profissionais => {
+        this.profissionaisFiltrados = profissionais;
+  
+        this.agendamentoForm.get('profissionalNome')?.setValidators([
+          Validators.required,
+          this.profissionalValidoValidator(this.profissionaisFiltrados)
+        ]);
+        this.agendamentoForm.get('profissionalNome')?.updateValueAndValidity();
+      });
     }
   }
+  
 
   buscarPacientes(nome: string): void {
-    if (nome.length < 2) {  
+    if (nome.length < 2) {
       this.pacientesFiltrados = [];
       return;
     }
 
     this.pacienteService.buscarPacientePorNome(nome).subscribe(pacientes => {
       this.pacientesFiltrados = pacientes;
+
+      this.agendamentoForm.get('nome')?.setValidators([
+        Validators.required,
+        this.pacienteValidoValidator(this.pacientesFiltrados)
+      ]);
+      this.agendamentoForm.get('nome')?.updateValueAndValidity();
     });
   }
 
@@ -52,34 +87,36 @@ export class AgendamentoModalComponent implements OnInit {
       this.profissionaisFiltrados = [];
       return;
     }
-  
+
     this.profissionalService.buscarProfissionaisPorNome(nome).subscribe(profissionais => {
-      console.log('Profissionais filtrados recebidos:', profissionais); 
       this.profissionaisFiltrados = profissionais;
+
+      this.agendamentoForm.get('profissionalNome')?.setValidators([
+        Validators.required,
+        this.profissionalValidoValidator(this.profissionaisFiltrados)
+      ]);
+      this.agendamentoForm.get('profissionalNome')?.updateValueAndValidity();
     });
   }
-  
 
-  selecionarPaciente(option: any): void {
-    const pacienteSelecionado = this.pacientesFiltrados.find(p => p.nome === option.value);
-  
-    if (pacienteSelecionado) {
-      this.nome = pacienteSelecionado.nome;
-      this.idade = this.calcularIdade(pacienteSelecionado.dataNascimento); 
-    } else {
-      this.nome = ''; 
-      this.idade = null;
-    }
+  pacienteValidoValidator(pacientes: Paciente[]) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const nome = control.value;
+      return pacientes.some(p => p.nome === nome) ? null : { pacienteInvalido: true };
+    };
   }
 
-  selecionarProfissional(nome: string): void {
-    this.profissionalNome = nome;
+  profissionalValidoValidator(profissionais: Profissional[]) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const nome = control.value;
+      return profissionais.some(p => p.nome === nome) ? null : { profissionalInvalido: true };
+    };
   }
 
   calcularIdade(dataNascimento: string): number {
     const nascimento = new Date(dataNascimento);
     const idadeDifMs = Date.now() - nascimento.getTime();
-    const idadeData = new Date(idadeDifMs); 
+    const idadeData = new Date(idadeDifMs);
     return Math.abs(idadeData.getUTCFullYear() - 1970);
   }
 
@@ -88,59 +125,36 @@ export class AgendamentoModalComponent implements OnInit {
   }
 
   salvar(): void {
-    const pacienteValido = this.pacientesFiltrados.find(p => p.nome === this.nome);
-    const profissionalValido = this.profissionaisFiltrados.find(p => p.nome === this.profissionalNome);
-  
-    if (!pacienteValido) {
-      alert("Selecione um paciente válido da lista!");
+    if (this.agendamentoForm.invalid) {
+      this.agendamentoForm.markAllAsTouched();
       return;
     }
-  
-    if (!profissionalValido) {
-      alert("Selecione um profissional válido da lista!");
-      return;
-    }
-  
-    this.idade = this.calcularIdade(pacienteValido.dataNascimento);
-  
-    if (!this.hora || !this.nome || this.idade === null || !this.profissionalNome) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-  
+
+    const { hora, nome, profissionalNome } = this.agendamentoForm.value;
+    const paciente = this.pacientesFiltrados.find(p => p.nome === nome);
+    const profissional = this.profissionaisFiltrados.find(p => p.nome === profissionalNome);
+
+    if (!paciente || !profissional) return;
+
+    this.idade = this.calcularIdade(paciente.dataNascimento);
+
     const agendamento: Agendamento = {
       data: this.data.dataSelecionada.toISOString().split('T')[0],
-      hora: this.hora,
-      nome: this.nome,
+      hora,
+      nome,
       idade: this.idade,
-      profissionalNome: this.profissionalNome,
-      profissionalUid: profissionalValido.uid
+      profissionalNome,
+      profissionalUid: profissional.uid
     };
-  
-    if (this.id) {
-      agendamento.id = this.id;
-      this.agendamentoService.atualizarAgendamento(agendamento)
-        .then(() => {
-          alert("Agendamento atualizado com sucesso!");
-          this.dialogRef.close(agendamento);
-        })
-        .catch(error => {
-          alert("Erro ao atualizar o agendamento!");
-          console.error(error);
-        });
-    } else {
-      this.agendamentoService.salvarAgendamento(agendamento)
-        .then(() => {
-          alert("Agendamento salvo com sucesso!");
-          this.dialogRef.close(agendamento);
-        })
-        .catch(error => {
-          alert("Erro ao salvar o agendamento!");
-          console.error(error);
-        });
-    }
+
+    const request = this.id
+      ? this.agendamentoService.atualizarAgendamento({ ...agendamento, id: this.id })
+      : this.agendamentoService.salvarAgendamento(agendamento);
+
+    request
+      .then(() => this.dialogRef.close(agendamento))
+      .catch(error => console.error('Erro ao salvar agendamento:', error));
   }
-  
 
   onInput(event: Event): void {
     const nome = (event.target as HTMLInputElement).value;

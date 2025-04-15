@@ -17,12 +17,28 @@ export class AuthService {
 
   async login(email: string, password: string) {
     try {
-      await this.afAuth.signInWithEmailAndPassword(email, password);
-      this.router.navigate(['/home']); 
+      const userCredential = await this.afAuth.signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+  
+      if (user) {
+        const docRef = this.firestore.collection('users').doc(user.uid);
+        const snapshot = await docRef.ref.get();
+  
+        if (!snapshot.exists) {
+          // Se não encontrou o usuário no Firestore
+          await this.afAuth.signOut();
+          alert('Usuário removido do sistema. Entre em contato com o administrador.');
+          return;
+        }
+  
+        this.router.navigate(['/home']);
+      }
+  
     } catch (error: any) {
       this.handleAuthError(error); 
     }
   }
+  
   
 
   async registerInterno(email: string, password: string, departamento: string, nome: string, tipo: string): Promise<void> {
