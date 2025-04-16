@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pacientes.component.scss']
 })
 export class PacientesComponent implements OnInit {
+  //tipoUsuario: string | null = null;
   displayedColumns: string[] = ['nome', 'dataNascimento', 'telefone', 'acoes'];
   dataSource = new MatTableDataSource<Paciente>();
 

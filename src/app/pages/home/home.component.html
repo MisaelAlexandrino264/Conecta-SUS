@@ -28,9 +28,14 @@
       </mat-card>
       <p>Data selecionada: {{ selected | date: 'dd/MM/yyyy' }}</p>
 
-      <button mat-raised-button class="custom-btn schedule-btn" (click)="abrirModalAgendamento()">
+      <button
+        mat-raised-button
+        class="custom-btn schedule-btn"
+        *ngIf="tipoUsuario === 'Secretaria'"
+        (click)="abrirModalAgendamento()">
         Agendar Atendimento
       </button>
+
     </div>
   </div>
 </div>

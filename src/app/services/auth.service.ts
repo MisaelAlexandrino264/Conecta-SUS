@@ -9,6 +9,9 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
+
+  private tipoUsuario: string | null = null;
+
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
@@ -91,6 +94,23 @@ export class AuthService {
       throw error;
     }
   }
+
+  getTipoUsuarioLocal(): string | null {
+    return this.tipoUsuario;
+  }
+
+  async getTipoUsuario(): Promise<string | null> {
+    if (this.tipoUsuario) return this.tipoUsuario;
+  
+    const currentUser = await this.afAuth.currentUser;
+    if (!currentUser) return null;
+  
+    const snapshot = await this.firestore.collection('users').doc(currentUser.uid).get().toPromise();
+    const data = snapshot?.data() as { tipo?: string } | undefined; 
+    this.tipoUsuario = data?.tipo || null;
+    return this.tipoUsuario;
+  }
+  
   
 
   private handleAuthError(error: any) {

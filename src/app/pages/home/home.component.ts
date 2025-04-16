@@ -4,6 +4,7 @@ import { AgendamentoModalComponent } from '../home/agendamento-modal/agendamento
 import { Agendamento, AgendamentoService } from '../../services/agendamento.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -12,20 +13,33 @@ import Swal from 'sweetalert2';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+  tipoUsuario: string | null = null;
   selected: Date | null = null;
   agendamentos: Agendamento[] = []; 
   hoje = new Date(); 
   constructor(
     public dialog: MatDialog,
     private agendamentoService: AgendamentoService, 
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.tipoUsuario = this.authService.getTipoUsuarioLocal();
+    console.log('Tipo do usuário (local):', this.tipoUsuario);
+  
+    if (!this.tipoUsuario) {
+      this.authService.getTipoUsuario().then(tipo => {
+        this.tipoUsuario = tipo;
+        console.log('Tipo carregado do Firestore:', tipo);
+      });
+    }
+  
     if (this.selected) {
       this.buscarAgendamentos(this.selected);
     }
   }
+  
 
   // Buscar agendamentos de acordo com a data selecionada
   buscarAgendamentos(data: Date | null): void {
