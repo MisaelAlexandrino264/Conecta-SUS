@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-pacientes',
@@ -13,16 +14,26 @@ import Swal from 'sweetalert2';
   styleUrls: ['./pacientes.component.scss']
 })
 export class PacientesComponent implements OnInit {
-  //tipoUsuario: string | null = null;
+  tipoUsuario: string | null = null;
   displayedColumns: string[] = ['nome', 'dataNascimento', 'telefone', 'acoes'];
   dataSource = new MatTableDataSource<Paciente>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(public dialog: MatDialog, private pacienteService: PacienteService) {}
+  constructor(public dialog: MatDialog, private pacienteService: PacienteService, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.tipoUsuario = this.authService.getTipoUsuarioLocal();
+    console.log('Tipo do usuário (local):', this.tipoUsuario);
+  
+    if (!this.tipoUsuario) {
+      this.authService.getTipoUsuario().then(tipo => {
+        this.tipoUsuario = tipo;
+        console.log('Tipo carregado do Firestore:', tipo);
+      });
+    }
+  
     this.carregarPacientes();
   }
 

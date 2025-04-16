@@ -3,9 +3,13 @@
 <div class="container">
   <div class="header">
     <h1>Pacientes</h1>
-    <button mat-raised-button class="add-button" (click)="abrirCadastroPaciente()">
+
+    <button mat-raised-button class="add-button" 
+      *ngIf="tipoUsuario === 'Secretaria'"
+      (click)="abrirCadastroPaciente()">
       <mat-icon>add</mat-icon> Novo Paciente
     </button>
+
   </div>
 
   <div class="search-container">

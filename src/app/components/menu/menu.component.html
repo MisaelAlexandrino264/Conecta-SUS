@@ -5,7 +5,12 @@
     <div class="menu">
       <a routerLink="/home" class="menu-item">Home</a>
       <a routerLink="/pacientes" class="menu-item">Pacientes</a>
-      <a routerLink="/usuarios" class="menu-item">Usuário</a>
+      <a
+      [routerLink]="tipoUsuario === 'Secretaria' ? '/usuarios' : null"
+      class="menu-item"
+      [class.disabled]="tipoUsuario !== 'Secretaria'"
+      >Usuário</a
+    >
       <a (click)="logout()" class="menu-item logout">Sair</a>
     </div>
   </div>
