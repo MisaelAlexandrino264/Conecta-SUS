@@ -112,6 +112,17 @@ obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
   });
 }
 
+async verificarDisponibilidade(profissionalUid: string, data: string, hora: string): Promise<boolean> {
+  const q = query(this.colecaoAgendamentos,
+    where('profissionalUid', '==', profissionalUid),
+    where('data', '==', data),
+    where('hora', '==', hora)
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.empty; // true se não houver conflito
+}
+
 
 
   async excluirAgendamento(id: string): Promise<void> {

@@ -124,37 +124,52 @@ export class AgendamentoModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  salvar(): void {
+  async salvar(): Promise<void> {
     if (this.agendamentoForm.invalid) {
       this.agendamentoForm.markAllAsTouched();
       return;
     }
-
+  
     const { hora, nome, profissionalNome } = this.agendamentoForm.value;
     const paciente = this.pacientesFiltrados.find(p => p.nome === nome);
     const profissional = this.profissionaisFiltrados.find(p => p.nome === profissionalNome);
-
+  
     if (!paciente || !profissional) return;
-
+  
     this.idade = this.calcularIdade(paciente.dataNascimento);
-
+  
+    const dataAgendamento = this.data.dataSelecionada.toISOString().split('T')[0];
+  
+    const podeAgendar = await this.agendamentoService.verificarDisponibilidade(
+      profissional.uid,
+      dataAgendamento,
+      hora
+    );
+  
+    // Evita conflito de horário (exceto se estiver atualizando o próprio agendamento)
+    if (!podeAgendar && !this.id) {
+      alert("Esse profissional já tem um agendamento nesse horário.");
+      return;
+    }
+  
     const agendamento: Agendamento = {
-      data: this.data.dataSelecionada.toISOString().split('T')[0],
+      data: dataAgendamento,
       hora,
       nome,
       idade: this.idade,
       profissionalNome,
       profissionalUid: profissional.uid
     };
-
+  
     const request = this.id
       ? this.agendamentoService.atualizarAgendamento({ ...agendamento, id: this.id })
       : this.agendamentoService.salvarAgendamento(agendamento);
-
+  
     request
       .then(() => this.dialogRef.close(agendamento))
       .catch(error => console.error('Erro ao salvar agendamento:', error));
   }
+  
 
   onInput(event: Event): void {
     const nome = (event.target as HTMLInputElement).value;

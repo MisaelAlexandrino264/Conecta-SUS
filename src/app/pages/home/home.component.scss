@@ -1,35 +1,57 @@
 .content {
   margin-top: 100px;
   padding: 60px;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
 }
 
 .main-layout {
   display: flex;
   justify-content: space-between;
   gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column-reverse; // Inverte a ordem no mobile
+  }
+}
+
+.left-column,
+.right-column {
+  padding: 20px;
+  background-color: #e8f0fe;
+  border-radius: 8px;
+
+  @media (max-width: 768px) {
+    padding: 15px;
+  }
 }
 
 .left-column {
   flex: 1;
-  padding: 20px;
-  background-color: #e8f0fe;
-  border-radius: 8px;
 }
 
 .right-column {
   flex: 0.4;
-  padding: 20px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  background-color: #e8f0fe;
-  border-radius: 8px;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    flex: 1;
+    align-items: stretch;
+  }
 }
 
 .demo-inline-calendar-card {
   width: 300px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .appointment {
@@ -46,6 +68,11 @@ h3 {
 
 .schedule-btn {
   margin-top: 20px;
+  width: 100%;
+
+  @media (min-width: 769px) {
+    width: auto;
+  }
 }
 
 .appointment-actions {
@@ -53,6 +80,7 @@ h3 {
   align-items: center;
   gap: 15px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 mat-icon {
@@ -69,7 +97,8 @@ mat-icon {
   color: white !important;
 }
 
-.edit-icon, .delete-icon {
+.edit-icon,
+.delete-icon {
   cursor: pointer;
   font-size: 24px;
   transition: transform 0.2s;
