@@ -9,6 +9,8 @@
       <div *ngFor="let agendamento of agendamentos" class="appointment">
         <p><strong>Horário:</strong> {{ agendamento.hora }}</p>
         <p><strong>Paciente:</strong> {{ agendamento.nome }}</p>
+        <p *ngIf="tipoUsuario === 'Secretaria'"><strong>Profissional:</strong> {{ agendamento.profissionalNome }}</p>
+
         
         <div class="appointment-actions">
           <button mat-raised-button class="custom-btn" (click)="iniciarAtendimento(agendamento)">

@@ -112,6 +112,27 @@ obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
   });
 }
 
+obterAgendamentosPorData(data: Date): Observable<Agendamento[]> {
+  const dataString = data.toISOString().split('T')[0];
+
+  const q = query(this.colecaoAgendamentos, where('data', '==', dataString));
+
+  return new Observable<Agendamento[]>((observer) => {
+    getDocs(q).then((querySnapshot) => {
+      const agendamentos: Agendamento[] = [];
+      querySnapshot.forEach((doc) => {
+        const agendamento = doc.data() as Agendamento;
+        agendamentos.push({ ...agendamento, id: doc.id });
+      });
+      observer.next(agendamentos);
+    }).catch((error) => {
+      console.error("Erro ao obter agendamentos (secretaria):", error);
+      observer.error(error);
+    });
+  });
+}
+
+
 async verificarDisponibilidade(profissionalUid: string, data: string, hora: string, agendamentoId?: string): Promise<boolean> {
   const q = query(this.colecaoAgendamentos,
     where('profissionalUid', '==', profissionalUid),

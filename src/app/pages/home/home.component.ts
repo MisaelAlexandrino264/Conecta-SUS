@@ -43,14 +43,19 @@ export class HomeComponent implements OnInit {
 
   // Buscar agendamentos de acordo com a data selecionada
   buscarAgendamentos(data: Date | null): void {
-    if (data) {
-      this.agendamentoService.obterMeusAgendamentosPorData(data).subscribe((agendamentos) => {
-        this.agendamentos = agendamentos.sort((a, b) => {
-          return a.hora.localeCompare(b.hora); 
-        });
-      });
-    }
+    if (!data) return;
+  
+    const dataString = data.toISOString().split('T')[0];
+  
+    const busca$ = this.tipoUsuario === 'Secretaria'
+      ? this.agendamentoService.obterAgendamentosPorData(data)
+      : this.agendamentoService.obterMeusAgendamentosPorData(data);
+  
+    busca$.subscribe((agendamentos) => {
+      this.agendamentos = agendamentos.sort((a, b) => a.hora.localeCompare(b.hora));
+    });
   }
+  
 
   iniciarAtendimento(agendamento: Agendamento): void {
     this.router.navigate(['/atendimento'], { queryParams: { 
