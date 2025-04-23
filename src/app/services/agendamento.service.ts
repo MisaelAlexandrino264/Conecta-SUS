@@ -112,7 +112,7 @@ obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
   });
 }
 
-async verificarDisponibilidade(profissionalUid: string, data: string, hora: string): Promise<boolean> {
+async verificarDisponibilidade(profissionalUid: string, data: string, hora: string, agendamentoId?: string): Promise<boolean> {
   const q = query(this.colecaoAgendamentos,
     where('profissionalUid', '==', profissionalUid),
     where('data', '==', data),
@@ -120,8 +120,21 @@ async verificarDisponibilidade(profissionalUid: string, data: string, hora: stri
   );
 
   const snapshot = await getDocs(q);
-  return snapshot.empty; // true se não houver conflito
+
+  // Se nenhum agendamento nesse horário, está livre
+  if (snapshot.empty) return true;
+
+  // Se for edição, verificar se o único agendamento é ele mesmo
+  if (agendamentoId && snapshot.size === 1) {
+    const doc = snapshot.docs[0];
+    return doc.id === agendamentoId;
+  }
+
+  // Caso contrário, está ocupado
+  return false;
 }
+
+
 
 
 

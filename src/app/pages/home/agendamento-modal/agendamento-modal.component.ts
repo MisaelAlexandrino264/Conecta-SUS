@@ -137,17 +137,16 @@ export class AgendamentoModalComponent implements OnInit {
     if (!paciente || !profissional) return;
   
     this.idade = this.calcularIdade(paciente.dataNascimento);
-  
     const dataAgendamento = this.data.dataSelecionada.toISOString().split('T')[0];
   
     const podeAgendar = await this.agendamentoService.verificarDisponibilidade(
       profissional.uid,
       dataAgendamento,
-      hora
+      hora,
+      this.id // ← verifica exceção se for edição
     );
   
-    // Evita conflito de horário (exceto se estiver atualizando o próprio agendamento)
-    if (!podeAgendar && !this.id) {
+    if (!podeAgendar) {
       alert("Esse profissional já tem um agendamento nesse horário.");
       return;
     }
@@ -169,6 +168,7 @@ export class AgendamentoModalComponent implements OnInit {
       .then(() => this.dialogRef.close(agendamento))
       .catch(error => console.error('Erro ao salvar agendamento:', error));
   }
+  
   
 
   onInput(event: Event): void {
