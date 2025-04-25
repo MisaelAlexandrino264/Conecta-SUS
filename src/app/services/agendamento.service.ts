@@ -151,7 +151,6 @@ async verificarDisponibilidade(profissionalUid: string, data: string, hora: stri
     return doc.id === agendamentoId;
   }
 
-  // Caso contrário, está ocupado
   return false;
 }
 

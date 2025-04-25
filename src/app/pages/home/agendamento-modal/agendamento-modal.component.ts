@@ -143,7 +143,7 @@ export class AgendamentoModalComponent implements OnInit {
       profissional.uid,
       dataAgendamento,
       hora,
-      this.id // ← verifica exceção se for edição
+      this.id 
     );
   
     if (!podeAgendar) {
