@@ -13,12 +13,22 @@
 
         
         <div class="appointment-actions">
-          <button mat-raised-button class="custom-btn" (click)="iniciarAtendimento(agendamento)">
+          <button mat-raised-button class="custom-btn" 
+            (click)="iniciarAtendimento(agendamento)" 
+            *ngIf="!dataNoPassado">
             Iniciar Atendimento
           </button>
 
-          <mat-icon class="edit-icon" *ngIf="tipoUsuario === 'Secretaria'" (click)="abrirModalAgendamento(agendamento)">edit</mat-icon>
-          <mat-icon class="delete-icon" *ngIf="tipoUsuario === 'Secretaria'" (click)="verificarIdEExcluir(agendamento.id)">delete</mat-icon>
+          <mat-icon class="edit-icon" 
+            *ngIf="tipoUsuario === 'Secretaria' && !dataNoPassado" 
+            (click)="abrirModalAgendamento(agendamento)">
+            edit
+          </mat-icon>
+          <mat-icon class="delete-icon" 
+            *ngIf="tipoUsuario === 'Secretaria' && !dataNoPassado" 
+            (click)="verificarIdEExcluir(agendamento.id)">
+            delete
+          </mat-icon>
         </div>
       </div>
     </div>

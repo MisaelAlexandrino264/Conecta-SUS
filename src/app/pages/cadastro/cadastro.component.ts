@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-cadastro',
@@ -93,6 +95,20 @@ export class CadastroComponent {
   }
 
   cancelar() {
-    this.router.navigate(['/usuarios']);
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: 'Todas as informações preenchidas serão perdidas!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, cancelar',
+      cancelButtonText: 'Continuar preenchendo'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.router.navigate(['/usuarios']);
+      }
+    });
   }
+  
 }

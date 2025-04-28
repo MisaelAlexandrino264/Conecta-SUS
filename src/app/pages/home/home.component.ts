@@ -16,7 +16,9 @@ export class HomeComponent implements OnInit {
   tipoUsuario: string | null = null;
   selected: Date | null = null;
   agendamentos: Agendamento[] = []; 
-  hoje = new Date(); 
+  hoje = new Date();
+  dataNoPassado: boolean = false;
+
   constructor(
     public dialog: MatDialog,
     private agendamentoService: AgendamentoService, 
@@ -45,7 +47,13 @@ export class HomeComponent implements OnInit {
   buscarAgendamentos(data: Date | null): void {
     if (!data) return;
   
-    const dataString = data.toISOString().split('T')[0];
+    const hojeSemHoras = new Date();
+    hojeSemHoras.setHours(0, 0, 0, 0);
+  
+    const dataSelecionadaSemHoras = new Date(data);
+    dataSelecionadaSemHoras.setHours(0, 0, 0, 0);
+  
+    this.dataNoPassado = dataSelecionadaSemHoras < hojeSemHoras;
   
     const busca$ = this.tipoUsuario === 'Secretaria'
       ? this.agendamentoService.obterAgendamentosPorData(data)
@@ -55,6 +63,7 @@ export class HomeComponent implements OnInit {
       this.agendamentos = agendamentos.sort((a, b) => a.hora.localeCompare(b.hora));
     });
   }
+  
   
 
   iniciarAtendimento(agendamento: Agendamento): void {
@@ -138,11 +147,8 @@ export class HomeComponent implements OnInit {
   }
 
   filtroDatas = (d: Date | null): boolean => {
-    if (!d) return false;
-    const dataSemHoras = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    const hojeSemHoras = new Date(this.hoje.getFullYear(), this.hoje.getMonth(), this.hoje.getDate());
-  
-    return dataSemHoras >= hojeSemHoras;
+    return true; // Agora permite selecionar qualquer data
   };
+  
   
 }
