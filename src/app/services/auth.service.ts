@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,13 @@ export class AuthService {
         if (!snapshot.exists) {
           // Se não encontrou o usuário no Firestore
           await this.afAuth.signOut();
-          alert('Usuário removido do sistema. Entre em contato com o administrador.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao realizar login',
+            text: 'Usuário removido do sistema. Entre em contato com o administrador.',
+            confirmButtonColor: '#d33'
+          });
+          
           return;
         }
   
@@ -47,7 +54,7 @@ export class AuthService {
   async registerInterno(email: string, password: string, departamento: string, nome: string, tipo: string): Promise<void> {
     const { initializeApp } = await import('firebase/app');
     const { getAuth, createUserWithEmailAndPassword } = await import('firebase/auth');
-    const app = initializeApp(environment.firebaseConfig, 'segundoApp'); // ✅ aqui corrigido
+    const app = initializeApp(environment.firebaseConfig, 'segundoApp'); 
     const secondAuth = getAuth(app);
   
     try {
@@ -62,11 +69,23 @@ export class AuthService {
           nome: nome,
           tipo: tipo
         });
-        alert('Usuário cadastrado com sucesso!');
+        Swal.fire({
+          icon: 'success',
+          title: 'Sucesso!',
+          text: 'Usuário cadastrado com sucesso!',
+          confirmButtonColor: '#0d47a1'
+        });
+        
       }
     } catch (error: any) {
       console.error("Erro ao registrar novo usuário internamente:", error);
-      alert("Erro ao cadastrar o usuário: " + (error?.message || ''));
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao cadastrar o usuário',
+        text: error?.message || 'Erro desconhecido.',
+        confirmButtonColor: '#d33'
+      });
+      
     }
   }
   
@@ -124,12 +143,22 @@ export class AuthService {
       errorMsg = "A senha precisa ter pelo menos 6 caracteres.";
     } else if (error.code === 'auth/invalid-email') {
       errorMsg = "O e-mail fornecido não é válido.";
-    } else if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+    } else if (
+      error.code === 'auth/wrong-password' ||
+      error.code === 'auth/user-not-found' ||
+      error.code === 'auth/invalid-credential'
+    ) {
       errorMsg = "Email ou senha incorretos.";
     }
   
-    alert(errorMsg);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro de autenticação',
+      text: errorMsg,
+      confirmButtonColor: '#0d47a1'
+    });
   }
+  
   
   
   

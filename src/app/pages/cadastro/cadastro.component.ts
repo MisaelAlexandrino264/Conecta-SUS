@@ -83,7 +83,12 @@ export class CadastroComponent {
     try {
       if (this.editando && this.uidEditando) {
         await this.authService.atualizarUsuario(this.uidEditando, nome, tipo, departamento);
-        alert('Usuário atualizado com sucesso!');
+         Swal.fire({
+              icon: 'success',
+              title: 'Sucesso!',
+              text: 'Usuário atualizado com sucesso!',
+              confirmButtonColor: '#0d47a1'
+          });
       } else {
         await this.authService.registerInterno(email, password, departamento, nome, tipo);
       }

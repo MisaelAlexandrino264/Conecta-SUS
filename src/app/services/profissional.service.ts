@@ -24,7 +24,7 @@ export class ProfissionalService {
          .endAt(nome + '\uf8ff')
     ).valueChanges().pipe(
       map(profissionais => {
-        console.log('Profissionais encontrados:', profissionais); // ✅ Testar se está retornando dados
+        console.log('Profissionais encontrados:', profissionais); 
         return profissionais;
       })
     );

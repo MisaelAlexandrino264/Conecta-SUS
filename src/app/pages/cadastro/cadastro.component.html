@@ -55,7 +55,7 @@
 
         <mat-form-field appearance="fill" floatLabel="always">
           <mat-label>Confirmar Senha</mat-label>
-          <input matInput formControlName="confirmPassword" type="password" (input)="verificarSenha()">
+          <input matInput formControlName="confirmPassword" type="password" required (input)="verificarSenha()">
           <mat-error *ngIf="senhaInvalida">
             As senhas não coincidem.
           </mat-error>

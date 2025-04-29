@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cadastro-paciente',
@@ -61,28 +62,48 @@ export class CadastroPacienteComponent implements OnInit {
           (!this.isEditMode || (this.isEditMode && pacientesComMesmoCPF[0].id !== this.pacienteId));
   
         if (isCpfDuplicado) {
-          this.snackBar.open('Já existe um paciente cadastrado com este CPF.', 'Fechar', { duration: 3000 });
+          Swal.fire({
+            icon: 'warning',
+            title: 'CPF duplicado',
+            text: 'Já existe um paciente cadastrado com este CPF.',
+            confirmButtonColor: '#0d47a1'
+          });
           return;
         }
   
         if (this.isEditMode && this.pacienteId) {
           this.pacienteService.atualizarPaciente(this.pacienteId, paciente)
             .then(() => {
-              this.snackBar.open('Paciente atualizado com sucesso!', 'Fechar', { duration: 3000 });
+              Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: 'Paciente atualizado com sucesso!',
+                confirmButtonColor: '#0d47a1'
+              });
               this.fechar();
             })
             .catch((error) => console.error('Erro ao atualizar paciente:', error));
         } else {
           this.pacienteService.criarPaciente(paciente)
             .then(() => {
-              this.snackBar.open('Paciente cadastrado com sucesso!', 'Fechar', { duration: 3000 });
+              Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: 'Paciente cadastrado com sucesso!',
+                confirmButtonColor: '#0d47a1'
+              });
               this.fechar();
             })
             .catch((error) => console.error('Erro ao salvar paciente:', error));
         }
       });
     } else {
-      this.snackBar.open('Preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulário incompleto',
+        text: 'Preencha todos os campos obrigatórios corretamente.',
+        confirmButtonColor: '#0d47a1'
+      });
     }
   }
   
@@ -102,11 +123,21 @@ export class CadastroPacienteComponent implements OnInit {
               estado: dados.uf
             });
           } else {
-            this.snackBar.open('CEP não encontrado.', 'Fechar', { duration: 3000 });
+            Swal.fire({
+              icon: 'warning',
+              title: 'CEP não encontrado',
+              text: 'Verifique se o CEP está correto.',
+              confirmButtonColor: '#0d47a1'
+            });
           }
         })
         .catch(() => {
-          this.snackBar.open('Erro ao buscar o CEP. Tente novamente.', 'Fechar', { duration: 3000 });
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro na busca do CEP',
+            text: 'Não foi possível buscar o CEP. Tente novamente.',
+            confirmButtonColor: '#0d47a1'
+          });
         });
     }
   }
