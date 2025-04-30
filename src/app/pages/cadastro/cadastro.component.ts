@@ -49,26 +49,33 @@ export class CadastroComponent {
         departamento: usuario.departamento
       });
 
-      this.cadastroForm.get('email')?.disable(); // Impede edição do e-mail
-      this.cadastroForm.get('password')?.disable(); // Senha não será atualizada aqui
+      this.cadastroForm.get('email')?.disable(); 
+      this.cadastroForm.get('password')?.disable(); 
       this.cadastroForm.get('confirmPassword')?.disable();
     }
   }
 
   verificarSenha() {
     if (this.editando) return;
-
+  
     const password = this.cadastroForm.get('password')?.value;
     const confirmPassword = this.cadastroForm.get('confirmPassword')?.value;
-
-    this.senhaInvalida = password !== confirmPassword && confirmPassword !== '';
-
+  
+    if (!confirmPassword) {
+      this.senhaInvalida = true;
+      this.cadastroForm.get('confirmPassword')?.setErrors({ required: true });
+      return;
+    }
+  
+    this.senhaInvalida = password !== confirmPassword;
+  
     if (this.senhaInvalida) {
       this.cadastroForm.get('confirmPassword')?.setErrors({ mismatch: true });
     } else {
       this.cadastroForm.get('confirmPassword')?.setErrors(null);
     }
   }
+  
 
   async onSubmit() {
     this.formInvalido = this.cadastroForm.invalid || this.senhaInvalida;
