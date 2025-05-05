@@ -13,8 +13,12 @@ export interface Atendimento {
   prescricao: string;
   formularios: string;
   cid10: string;
-  status: string; 
+  status: string;
+  profissionalUid?: string;
+  profissionalNome?: string;
 }
+
+
 
 @Injectable({
   providedIn: 'root'

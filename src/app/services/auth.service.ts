@@ -130,6 +130,13 @@ export class AuthService {
     return this.tipoUsuario;
   }
   
+  async getUsuarioLogado(): Promise<any | null> {
+    const currentUser = await this.afAuth.currentUser;
+    if (!currentUser) return null;
+  
+    const snapshot = await this.firestore.collection('users').doc(currentUser.uid).get().toPromise();
+    return snapshot?.data() || null;
+  }
   
 
   private handleAuthError(error: any) {

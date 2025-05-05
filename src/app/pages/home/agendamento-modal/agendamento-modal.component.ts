@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendamentoService, Agendamento } from '../../../services/agendamento.service';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
 import { ProfissionalService, Profissional } from '../../../services/profissional.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-agendamento-modal',
@@ -147,7 +148,12 @@ export class AgendamentoModalComponent implements OnInit {
     );
   
     if (!podeAgendar) {
-      alert("Esse profissional já tem um agendamento nesse horário.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Erro ao agendar',
+        text: 'Esse profissional já tem um agendamento nesse horário.',
+        confirmButtonColor: '#0d47a1'
+      });
       return;
     }
   
