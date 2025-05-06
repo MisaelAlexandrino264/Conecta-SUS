@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pacientes',
@@ -21,7 +22,7 @@ export class PacientesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(public dialog: MatDialog, private pacienteService: PacienteService, private authService: AuthService) {}
+  constructor(public dialog: MatDialog, private pacienteService: PacienteService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.tipoUsuario = this.authService.getTipoUsuarioLocal();
@@ -58,6 +59,13 @@ export class PacientesComponent implements OnInit {
       this.carregarPacientes();
     });
   }
+
+  visualizarPaciente(paciente: Paciente): void {
+    this.router.navigate(['/visualizar-paciente'], {
+      queryParams: { id: paciente.id }
+    });
+  }
+  
 
   editarPaciente(paciente: Paciente) {
     const dialogRef = this.dialog.open(CadastroPacienteComponent, {

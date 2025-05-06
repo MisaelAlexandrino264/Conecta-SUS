@@ -66,13 +66,16 @@
 }
 
 
-.edit-icon, .delete-icon {
+.edit-icon, .delete-icon, .view-icon {
   cursor: pointer;
   font-size: 24px;
   transition: transform 0.2s;
   margin: 0 8px; 
 }
-
+.view-icon:hover {
+  color: #1976d2;
+  transform: scale(1.2);
+}
 .edit-icon:hover {
   color: #1976d2;
   transform: scale(1.2);
@@ -97,3 +100,24 @@
   }
 }
 
+.paciente-link {
+  cursor: pointer;
+  color: inherit; // mantém a cor padrão do texto
+  text-decoration: none; // remove sublinhado
+
+  &:hover {
+    opacity: 0.8; // leve destaque no hover
+  }
+}
+
+.acoes-header {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.acoes-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center; // centraliza horizontalmente
+  gap: 8px;
+}
