@@ -43,7 +43,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { UsuariosComponent } from './pages/usuarios/usuarios.component';
-import { VisualizarPacienteComponent } from './pages/pacientes/visualizar-paciente/visualizar-paciente.component';
+import {VisualizarPacienteComponent} from './pages/pacientes/visualizar-paciente/visualizar-paciente.component';
 
 
 @NgModule({
@@ -82,7 +82,7 @@ import { VisualizarPacienteComponent } from './pages/pacientes/visualizar-pacien
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
     
   ],
   providers: [

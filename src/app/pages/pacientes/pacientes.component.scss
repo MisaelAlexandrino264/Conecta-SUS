@@ -102,11 +102,11 @@
 
 .paciente-link {
   cursor: pointer;
-  color: inherit; // mantém a cor padrão do texto
-  text-decoration: none; // remove sublinhado
+  color: inherit;
+  text-decoration: none; 
 
   &:hover {
-    opacity: 0.8; // leve destaque no hover
+    opacity: 0.8; 
   }
 }
 
@@ -118,6 +118,6 @@
 .acoes-icons {
   display: flex;
   align-items: center;
-  justify-content: center; // centraliza horizontalmente
+  justify-content: center; 
   gap: 8px;
 }

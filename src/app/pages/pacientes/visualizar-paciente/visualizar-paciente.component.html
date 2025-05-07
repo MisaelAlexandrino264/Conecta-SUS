@@ -1,1 +1,27 @@
-<p>visualizar-paciente works!</p>
+<app-menu></app-menu>
+
+<div class="visualizar-container" *ngIf="paciente">
+  <h2>{{ paciente.nome }}</h2>
+
+  <div class="dados-pessoais">
+    <p><strong>Data de nascimento:</strong> {{ paciente.dataNascimento | date: 'dd/MM/yyyy' }}</p>
+    <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
+    <p><strong>Número do SUS:</strong> {{ paciente.numeroSus }}</p>
+    <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+    <p><strong>Email:</strong> {{ paciente.email }}</p>
+  </div>
+
+  <button mat-icon-button (click)="toggleEndereco()" aria-label="Toggle endereço">
+    <mat-icon>{{ mostrarEndereco ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </button>
+  <span class="toggle-label">Endereço</span>
+
+  <div *ngIf="mostrarEndereco" class="dados-endereco">
+    <p><strong>CEP:</strong> {{ paciente.cep }}</p>
+    <p><strong>Cidade:</strong> {{ paciente.cidade }}</p>
+    <p><strong>Bairro:</strong> {{ paciente.bairro }}</p>
+    <p><strong>Rua:</strong> {{ paciente.rua }}</p>
+    <p><strong>Número:</strong> {{ paciente.numero }}</p>
+    <p><strong>Complemento:</strong> {{ paciente.complemento }}</p>
+  </div>
+</div>
