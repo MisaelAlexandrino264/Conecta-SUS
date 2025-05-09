@@ -156,12 +156,14 @@ export class AgendamentoModalComponent implements OnInit {
       });
       return;
     }
+    console.log('Paciente no momento da criação do agendamento:', paciente);
   
     const agendamento: Agendamento = {
       data: dataAgendamento,
       hora,
       nome,
       idade: this.idade,
+      pacienteId: paciente.id, 
       profissionalNome,
       profissionalUid: profissional.uid
     };

@@ -24,6 +24,7 @@ export class AtendimentoComponent implements OnInit {
   formularios: string = '';
   cid10: string = '';
   profissionalNome: string = '';
+  pacienteId: string | null = null;
 
 
   constructor(
@@ -35,10 +36,19 @@ export class AtendimentoComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.id = params['id'] || null;
+      console.log('Query Params recebidos:', params);
+      
+      this.id = params['id'] || null; 
+      this.pacienteId = params['pacienteId'] || null;
       this.nome = params['nome'] || 'Desconhecido';
       this.idade = params['idade'] ? Number(params['idade']) : null;
       this.data = params['data'] || '';
+
+    console.log('ID do agendamento:', this.id);
+    console.log('ID do paciente:', this.pacienteId);
+    console.log('Nome:', this.nome);
+    console.log('Idade:', this.idade);
+    console.log('Data:', this.data);
     });
   
     this.carregarUsuarioLogado(); // chamada correta
@@ -53,7 +63,7 @@ export class AtendimentoComponent implements OnInit {
   
 
   async salvarAtendimento(): Promise<void> {
-    if (!this.id || !this.nome || !this.data) {
+    if (!this.pacienteId || !this.id|| !this.nome || !this.data) {
       alert('Erro ao salvar o atendimento: Dados incompletos.');
       return;
     }
@@ -65,6 +75,7 @@ export class AtendimentoComponent implements OnInit {
     }
   
     const atendimento: Atendimento = {
+      pacienteId: this.pacienteId,
       nome: this.nome,
       idade: this.idade!,
       data: this.data,

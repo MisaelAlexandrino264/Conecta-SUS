@@ -15,7 +15,7 @@ import { AuthService } from '../../services/auth.service';
 export class HomeComponent implements OnInit {
   tipoUsuario: string | null = null;
   selected: Date | null = null;
-  agendamentos: Agendamento[] = []; 
+  agendamentos: Agendamento[] = [];
   hoje = new Date();
   dataNoPassado: boolean = false;
 
@@ -67,8 +67,10 @@ export class HomeComponent implements OnInit {
   
 
   iniciarAtendimento(agendamento: Agendamento): void {
+    console.log('PacienteId enviado para atendimento:', agendamento.pacienteId);
     this.router.navigate(['/atendimento'], { queryParams: { 
-      id: agendamento.id, 
+      id: agendamento.id,
+      pacienteId: agendamento.pacienteId, 
       nome: agendamento.nome, 
       idade: agendamento.idade,
       data: agendamento.data 

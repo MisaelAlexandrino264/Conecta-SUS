@@ -14,6 +14,7 @@ export interface Agendamento {
   hora: string;  
   nome: string;
   idade: number;
+  pacienteId?: string; 
   uid?: string;
   profissionalNome?: string;
   profissionalUid?: string;

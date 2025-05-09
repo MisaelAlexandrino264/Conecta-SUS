@@ -3,6 +3,7 @@ import { Firestore, collection, addDoc, updateDoc, doc } from '@angular/fire/fir
 
 export interface Atendimento {
   id?: string;
+  pacienteId: string; 
   nome: string;
   idade: number;
   data: string; 
