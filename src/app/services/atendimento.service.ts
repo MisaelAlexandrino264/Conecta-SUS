@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, updateDoc, doc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, updateDoc, doc, query, where, getDocs } from '@angular/fire/firestore';
+
 
 export interface Atendimento {
   id?: string;
@@ -38,4 +39,16 @@ export class AtendimentoService {
     const agendamentoRef = doc(this.firestore, `agenda/${agendamentoId}`);
     await updateDoc(agendamentoRef, { status: 'Finalizado' });
   }
+
+  async obterAtendimentosPorPaciente(pacienteId: string): Promise<Atendimento[]> {
+  const q = query(
+    collection(this.firestore, 'atendimentos'),
+    where('pacienteId', '==', pacienteId)
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  } as Atendimento));
+}
 }

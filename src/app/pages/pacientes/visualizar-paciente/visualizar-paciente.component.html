@@ -24,4 +24,33 @@
     <p><strong>Número:</strong> {{ paciente.numero }}</p>
     <p><strong>Complemento:</strong> {{ paciente.complemento }}</p>
   </div>
+
+  <h3 style="margin-top: 32px;">Atendimentos</h3>
+<div *ngIf="atendimentos.length === 0">
+  <p>Este paciente ainda não possui atendimentos registrados.</p>
+</div>
+
+<ng-container *ngFor="let atendimento of atendimentos">
+  <div *ngIf="atendimento.id" class="atendimento-card">
+    <button mat-icon-button (click)="toggleAtendimento(atendimento.id)" aria-label="Toggle atendimento">
+      <mat-icon>{{ atendimentosExpandido[atendimento.id] ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+    <span class="toggle-label">
+      {{ atendimento.data | date: 'dd/MM/yyyy' }} - {{ atendimento.nome }} ({{ atendimento.profissionalNome }})
+    </span>
+
+    <div *ngIf="atendimentosExpandido[atendimento.id]" class="detalhes-atendimento">
+      <p><strong>Anamnese:</strong> {{ atendimento.anamnese }}</p>
+      <p><strong>Exame Físico:</strong> {{ atendimento.exameFisico }}</p>
+      <p><strong>Solicitação de Exames:</strong> {{ atendimento.solicitacaoExames }}</p>
+      <p><strong>Orientação:</strong> {{ atendimento.orientacao }}</p>
+      <p><strong>Prescrição:</strong> {{ atendimento.prescricao }}</p>
+      <p><strong>Formulários:</strong> {{ atendimento.formularios }}</p>
+      <p><strong>CID-10:</strong> {{ atendimento.cid10 }}</p>
+    </div>
+  </div>
+</ng-container>
+
+
+
 </div>

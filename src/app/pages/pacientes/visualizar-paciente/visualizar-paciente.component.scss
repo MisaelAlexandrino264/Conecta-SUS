@@ -25,4 +25,20 @@
     font-weight: bold;
     margin-left: 8px;
   }
+
+  .atendimento-card {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+  .detalhes-atendimento {
+    margin-top: 12px;
+    p {
+      margin: 4px 0;
+    }
+  }
+}
+
   
