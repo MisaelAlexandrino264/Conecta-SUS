@@ -41,12 +41,14 @@
       <p>Data selecionada: {{ selected | date: 'dd/MM/yyyy' }}</p>
 
       <button
-        mat-raised-button
-        class="custom-btn schedule-btn"
-        *ngIf="tipoUsuario === 'Secretaria'"
-        (click)="abrirModalAgendamento()">
-        Agendar Atendimento
-      </button>
+       mat-raised-button
+      class="custom-btn schedule-btn"
+      *ngIf="tipoUsuario === 'Secretaria'"
+      (click)="abrirModalAgendamento()"
+      [disabled]="dataNoPassado">
+  Agendar Atendimento
+</button>
+
 
     </div>
   </div>
