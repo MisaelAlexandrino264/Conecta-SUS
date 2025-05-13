@@ -11,7 +11,8 @@
           Por favor, digite um email válido.
         </mat-error>
       </mat-form-field>
-
+      
+      
       <mat-form-field appearance="fill" class="full-width" floatLabel="always">
         <mat-label>Senha</mat-label>
         <input matInput formControlName="password" type="password">
@@ -19,10 +20,16 @@
           A senha deve ter pelo menos 6 caracteres.
         </mat-error>
       </mat-form-field>
+      <!-- Link "Esqueci minha senha" -->
+      <div class="recuperar-senha-link">
+        <a href="#" (click)="abrirDialogRecuperarSenha(); $event.preventDefault();">Esqueci minha senha</a>
+      </div>
 
       <button mat-raised-button color="accent" class="full-width" type="submit">
         Entrar
       </button>
+
+
 
       <mat-error *ngIf="formInvalido" class="error-message">
         Preencha todos os campos corretamente.
@@ -39,3 +46,24 @@
 <div class="footer-text-container">
   <p class="footer-text">Prontuário Interdisciplinar UNICENTRO</p>
 </div>
+
+<ng-template #dialogRecuperarSenha>
+  <h2 mat-dialog-title>Recuperar Senha</h2>
+  <mat-dialog-content>
+    <p>Informe seu email para redefinir sua senha:</p>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput [(ngModel)]="emailRecuperacao" type="email">
+    </mat-form-field>
+    <div *ngIf="recuperacaoEmailErro" class="text-danger" style="font-size: 13px; margin-top: 4px;">
+      Erro ao enviar. Verifique se o e-mail está correto.
+    </div>
+
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="dialogRef.close()">Cancelar</button>
+    <button mat-raised-button class="custom-btn" (click)="enviarRecuperacaoSenha()">Enviar</button>
+
+  </mat-dialog-actions>
+</ng-template>

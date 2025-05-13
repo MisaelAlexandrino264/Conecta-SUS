@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import Swal from 'sweetalert2';
-
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 @Injectable({
   providedIn: 'root'
 })
@@ -138,6 +138,9 @@ export class AuthService {
     return snapshot?.data() || null;
   }
   
+  enviarEmailRedefinicaoSenha(email: string): Promise<void> {
+  return this.afAuth.sendPasswordResetEmail(email);
+}
 
   private handleAuthError(error: any) {
     console.error("Erro de autenticação:", error); 

@@ -80,7 +80,11 @@ export class HomeComponent implements OnInit {
 
   abrirModalAgendamento(agendamento?: Agendamento): void {
     if (!this.selected && !agendamento) {
-      alert('Selecione uma data no calendário antes de agendar!');
+      Swal.fire({
+            icon: 'warning',
+            title: 'Selecione uma data no calendário antes de agendar!',
+            confirmButtonColor: '#0d47a1'
+        });
       return;
     }
   

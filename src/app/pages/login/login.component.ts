@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -11,8 +13,20 @@ export class LoginComponent {
   loginForm: FormGroup;
   formInvalido: boolean = false;
   loginFalhou: boolean = false;
+  recuperacaoEmailEnviado: boolean = false;
+  recuperacaoEmailErro: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) { 
+
+  emailRecuperacao: string = '';
+  dialogRef!: MatDialogRef<any>;
+
+  @ViewChild('dialogRecuperarSenha') dialogTemplate!: TemplateRef<any>;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private dialog: MatDialog
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -29,12 +43,34 @@ export class LoginComponent {
 
     const { email, password } = this.loginForm.value;
     this.authService.login(email, password)
-    .then(() => {
-      this.loginFalhou = false; 
-    })
-    .catch(() => {
-      this.loginFalhou = true; 
-    });
+      .then(() => {
+        this.loginFalhou = false;
+      })
+      .catch(() => {
+        this.loginFalhou = true;
+      });
+  }
 
+  abrirDialogRecuperarSenha(): void {
+    this.emailRecuperacao = '';
+    this.dialogRef = this.dialog.open(this.dialogTemplate);
+  }
+
+  enviarRecuperacaoSenha(): void {
+    if (!this.emailRecuperacao) return;
+
+    this.authService.enviarEmailRedefinicaoSenha(this.emailRecuperacao)
+      .then(() => {
+        this.dialogRef.close();
+         Swal.fire({
+        icon: 'success',
+        title: 'E-mail enviado!',
+        text: 'Verifique sua caixa de entrada para redefinir sua senha.',
+        confirmButtonColor: '#0d47a1'
+      });
+      })
+      .catch(() => {
+        this.recuperacaoEmailErro = true;
+      });
   }
 }

@@ -63,6 +63,31 @@
   max-width: 80%;
 }
 
+.recuperar-senha-link {
+  text-align: right;
+  margin: 5px 0 10px;
 
+  a {
+    font-size: 0.9rem;
+    color: #0d47a1;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+.login-container button {
+  background-color: #0d47a1;
+  color: white;
+
+  &:hover {
+    background-color: #1565c0;
+  }
+}
+.custom-btn {
+      background-color: #0d47a1 !important;
+      color: #fff !important;
+    }
 
 
