@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
 import { AtendimentoService, Atendimento } from '../../../services/atendimento.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-visualizar-paciente',
@@ -11,17 +12,27 @@ import { AtendimentoService, Atendimento } from '../../../services/atendimento.s
 export class VisualizarPacienteComponent implements OnInit {
   paciente: Paciente | undefined;
   mostrarEndereco = false;
-
+  tipoUsuario: string | null = null;
   atendimentos: Atendimento[] = [];
   atendimentosExpandido: { [id: string]: boolean } = {};
 
   constructor(
     private route: ActivatedRoute,
     private pacienteService: PacienteService,
-    private atendimentoService: AtendimentoService
+    private atendimentoService: AtendimentoService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+
+     this.tipoUsuario = this.authService.getTipoUsuarioLocal();
+
+    if (!this.tipoUsuario) {
+      this.authService.getTipoUsuario().then(tipo => {
+        this.tipoUsuario = tipo;
+      });
+    }
+    
     this.route.queryParams.subscribe(params => {
       const id = params['id'];
       if (id) {

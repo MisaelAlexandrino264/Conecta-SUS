@@ -15,7 +15,7 @@
         <div class="appointment-actions">
           <button mat-raised-button class="custom-btn" 
             (click)="iniciarAtendimento(agendamento)" 
-            *ngIf="!dataNoPassado">
+            *ngIf="tipoUsuario === 'Profissional da saúde' && !dataNoPassado">
             Iniciar Atendimento
           </button>
 

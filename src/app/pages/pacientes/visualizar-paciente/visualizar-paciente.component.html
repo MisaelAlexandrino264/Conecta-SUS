@@ -32,7 +32,7 @@
 
 <ng-container *ngFor="let atendimento of atendimentos">
   <div *ngIf="atendimento.id" class="atendimento-card">
-    <button mat-icon-button (click)="toggleAtendimento(atendimento.id)" aria-label="Toggle atendimento">
+    <button *ngIf="tipoUsuario === 'Profissional da saúde'" mat-icon-button (click)="toggleAtendimento(atendimento.id)" aria-label="Toggle atendimento">
       <mat-icon>{{ atendimentosExpandido[atendimento.id] ? 'expand_less' : 'expand_more' }}</mat-icon>
     </button>
     <span class="toggle-label">
