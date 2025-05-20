@@ -18,6 +18,7 @@ export interface Agendamento {
   uid?: string;
   profissionalNome?: string;
   profissionalUid?: string;
+  status?: string;
 }
 
 @Injectable({
@@ -38,7 +39,8 @@ export class AgendamentoService {
   
     const agendamentoComUid = {
       ...agendamento,
-      criadoPorUid: user.uid 
+      criadoPorUid: user.uid,
+      status: agendamento.status ?? 'pendente'
     };
   
     await addDoc(this.colecaoAgendamentos, agendamentoComUid)
@@ -187,7 +189,8 @@ async verificarDisponibilidade(profissionalUid: string, data: string, hora: stri
       nome: agendamento.nome,
       idade: agendamento.idade,
       profissionalNome: agendamento.profissionalNome,
-      profissionalUid: agendamento.profissionalUid
+      profissionalUid: agendamento.profissionalUid,
+      status: agendamento.status ?? 'pendente'
     })
     .then(() => console.log("Agendamento atualizado com sucesso!"))
     .catch(error => console.error("Erro ao atualizar agendamento:", error));

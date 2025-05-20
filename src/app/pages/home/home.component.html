@@ -13,11 +13,17 @@
 
         
         <div class="appointment-actions">
-          <button mat-raised-button class="custom-btn" 
+          <button 
+            mat-raised-button 
+            class="custom-btn" 
             (click)="iniciarAtendimento(agendamento)" 
-            *ngIf="tipoUsuario === 'Profissional da saúde' && !dataNoPassado">
+            *ngIf="tipoUsuario === 'Profissional da saúde' && !dataNoPassado"
+            [disabled]="agendamento.status !== 'pendente'">
             Iniciar Atendimento
           </button>
+          <p *ngIf="agendamento.status !== 'pendente'" class="status-msg">
+            Atendimento já finalizado
+          </p>
 
           <mat-icon class="edit-icon" 
             *ngIf="tipoUsuario === 'Secretaria' && !dataNoPassado" 

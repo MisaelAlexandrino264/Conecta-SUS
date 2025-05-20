@@ -165,7 +165,8 @@ export class AgendamentoModalComponent implements OnInit {
       idade: this.idade,
       pacienteId: paciente.id, 
       profissionalNome,
-      profissionalUid: profissional.uid
+      profissionalUid: profissional.uid,
+      status: 'pendente' 
     };
   
     const request = this.id
