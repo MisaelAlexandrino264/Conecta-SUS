@@ -21,7 +21,7 @@ export class AtendimentoComponent implements OnInit {
   solicitacaoExames: string = '';
   orientacao: string = '';
   prescricao: string = '';
-  formularios: string = '';
+  conduta: string = '';
   cid10: string = '';
   profissionalNome: string = '';
   pacienteId: string | null = null;
@@ -84,7 +84,7 @@ export class AtendimentoComponent implements OnInit {
       solicitacaoExames: this.solicitacaoExames,
       orientacao: this.orientacao,
       prescricao: this.prescricao,
-      formularios: this.formularios,
+      conduta: this.conduta,
       cid10: this.cid10,
       status: 'Finalizado',
       profissionalUid: usuario.uid,

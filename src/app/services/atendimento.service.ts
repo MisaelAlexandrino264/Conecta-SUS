@@ -13,7 +13,7 @@ export interface Atendimento {
   solicitacaoExames: string;
   orientacao: string;
   prescricao: string;
-  formularios: string;
+  conduta: string;
   cid10: string;
   status: string;
   profissionalUid?: string;
