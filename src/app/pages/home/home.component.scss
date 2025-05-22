@@ -119,3 +119,9 @@ mat-icon {
   color: gray;
   margin-top: 5px;
 }
+.custom-btn:disabled {
+  background-color: #b0bec5 !important; 
+  color: #eceff1 !important;           
+  cursor: not-allowed !important;
+  opacity: 1 !important;               
+}
