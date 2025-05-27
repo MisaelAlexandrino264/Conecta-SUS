@@ -25,6 +25,11 @@ export class PacientesComponent implements OnInit {
   constructor(public dialog: MatDialog, private pacienteService: PacienteService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
+    
+    if (window.innerWidth <= 768) {
+    this.displayedColumns = ['nome', 'telefone', 'acoes'];
+    }
+
     this.tipoUsuario = this.authService.getTipoUsuarioLocal();
     console.log('Tipo do usuário (local):', this.tipoUsuario);
   

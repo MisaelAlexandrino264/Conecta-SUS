@@ -2,7 +2,7 @@
     width: 850px;  
     max-height: 75vh; 
     padding: 15px 30px;
-    overflow-y: auto; // Scroll se necessário
+    overflow-y: auto; 
   }
   
   .modal-title {
@@ -85,3 +85,31 @@
     z-index: 10;
   }
   
+  @media (max-width: 768px) {
+  .modal-container {
+    width: 100%;
+    padding: 15px 15px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0; 
+  }
+
+  .form-field,
+  .form-field.small,
+  .form-field.x-small {
+    flex: 1 !important;
+    width: 100%;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+    button {
+      width: 100%;
+    }
+  }
+
+  
+}

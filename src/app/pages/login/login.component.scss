@@ -6,6 +6,7 @@
   height: 100vh;
   background: linear-gradient(to right, #0d47a1 50%, #ffffff 50%);
   position: relative;
+  padding: 20px;
 
   .login-card {
     width: 350px;
@@ -35,11 +36,13 @@
     color: white;
     font-size: 2.5rem;
     font-weight: bold;
+    z-index: 2;
   }
 
   button {
     background-color: #0d47a1;
     color: white;
+
     &:hover {
       background-color: #1565c0;
     }
@@ -58,7 +61,7 @@
 
 .footer-text {
   color: #0d47a1;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   text-align: center;
   max-width: 80%;
 }
@@ -77,17 +80,36 @@
     }
   }
 }
-.login-container button {
-  background-color: #0d47a1;
-  color: white;
 
-  &:hover {
-    background-color: #1565c0;
-  }
-}
 .custom-btn {
-      background-color: #0d47a1 !important;
-      color: #fff !important;
+  background-color: #0d47a1 !important;
+  color: #fff !important;
+}
+
+// RESPONSIVIDADE
+@media (max-width: 768px) {
+  .login-container {
+    background: #ffffff;
+    height: auto;
+    min-height: 100vh;
+    padding-top: 80px;
+
+    .login-card {
+      width: 100%;
+      max-width: 320px;
     }
 
-
+    .app-title {
+      position: static;
+      color: #0d47a1;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  }
+  
+  .footer-text {
+    font-size: 1rem;
+    text-align: center;
+  }
+}

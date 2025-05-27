@@ -121,3 +121,10 @@
   justify-content: center; 
   gap: 8px;
 }
+
+
+@media (max-width: 768px) {
+  .col-data-nascimento {
+    display: none;
+  }
+}
