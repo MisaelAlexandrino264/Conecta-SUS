@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AtendimentoService, Atendimento } from '../../services/atendimento.service';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth.service'; 
+import { MatDialog } from '@angular/material/dialog';
+import  jsPDF  from 'jspdf';
+import { ExportarPdfModalComponent } from '../../components/exportar-pdf-modal/exportar-pdf-modal.component';
 
 
 @Component({
@@ -31,7 +34,8 @@ export class AtendimentoComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private atendimentoService: AtendimentoService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -116,4 +120,51 @@ export class AtendimentoComponent implements OnInit {
               }
             });
   }
+
+  abrirModalExportarPDF() {
+  const dialogRef = this.dialog.open(ExportarPdfModalComponent);
+
+  dialogRef.afterClosed().subscribe(camposSelecionados => {
+    if (camposSelecionados) {
+      const doc = new jsPDF();
+      let y = 10;
+
+      doc.setFontSize(12);
+      doc.text(`Atendimento - ${this.nome} (${this.idade} anos)`, 10, y);
+      y += 10;
+
+      if (camposSelecionados.anamnese) {
+        doc.text(`Anamnese: ${this.anamnese || '-'}`, 10, y);
+        y += 10;
+      }
+      if (camposSelecionados.exameFisico) {
+        doc.text(`Exame Físico: ${this.exameFisico || '-'}`, 10, y);
+        y += 10;
+      }
+      if (camposSelecionados.solicitacaoExames) {
+        doc.text(`Solicitação de Exames: ${this.solicitacaoExames || '-'}`, 10, y);
+        y += 10;
+      }
+      if (camposSelecionados.orientacao) {
+        doc.text(`Orientação: ${this.orientacao || '-'}`, 10, y);
+        y += 10;
+      }
+      if (camposSelecionados.prescricao) {
+        doc.text(`Prescrição: ${this.prescricao || '-'}`, 10, y);
+        y += 10;
+      }
+      if (camposSelecionados.conduta) {
+        doc.text(`Conduta: ${this.conduta || '-'}`, 10, y);
+        y += 10;
+      }
+      if (camposSelecionados.cid10) {
+        doc.text(`CID-10: ${this.cid10 || '-'}`, 10, y);
+        y += 10;
+      }
+
+      doc.save(`atendimento_${this.nome}.pdf`);
+    }
+  });
+}
+
 }
