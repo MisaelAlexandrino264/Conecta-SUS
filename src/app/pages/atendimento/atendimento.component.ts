@@ -126,43 +126,65 @@ export class AtendimentoComponent implements OnInit {
 
   dialogRef.afterClosed().subscribe(camposSelecionados => {
     if (camposSelecionados) {
-      const doc = new jsPDF();
-      let y = 10;
+      const img = new Image();
+      img.src = 'assets/logo.png';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0);
+        const imgData = canvas.toDataURL('image/png');
 
-      doc.setFontSize(12);
-      doc.text(`Atendimento - ${this.nome} (${this.idade} anos)`, 10, y);
-      y += 10;
+        const doc = new jsPDF();
+        let y = 10;
 
-      if (camposSelecionados.anamnese) {
-        doc.text(`Anamnese: ${this.anamnese || '-'}`, 10, y);
-        y += 10;
-      }
-      if (camposSelecionados.exameFisico) {
-        doc.text(`Exame Físico: ${this.exameFisico || '-'}`, 10, y);
-        y += 10;
-      }
-      if (camposSelecionados.solicitacaoExames) {
-        doc.text(`Solicitação de Exames: ${this.solicitacaoExames || '-'}`, 10, y);
-        y += 10;
-      }
-      if (camposSelecionados.orientacao) {
-        doc.text(`Orientação: ${this.orientacao || '-'}`, 10, y);
-        y += 10;
-      }
-      if (camposSelecionados.prescricao) {
-        doc.text(`Prescrição: ${this.prescricao || '-'}`, 10, y);
-        y += 10;
-      }
-      if (camposSelecionados.conduta) {
-        doc.text(`Conduta: ${this.conduta || '-'}`, 10, y);
-        y += 10;
-      }
-      if (camposSelecionados.cid10) {
-        doc.text(`CID-10: ${this.cid10 || '-'}`, 10, y);
-        y += 10;
-      }
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const imgWidth = 50;
+        const imgX = (pageWidth - imgWidth) / 2;
+        doc.addImage(imgData, 'PNG', imgX, y, imgWidth, 20);
+        y += 30;
 
-      doc.save(`atendimento_${this.nome}.pdf`);
+        doc.setFontSize(12);
+        doc.text(`Atendimento - ${this.nome} (${this.idade} anos)`, 10, y);
+        y += 10;
+
+        if (camposSelecionados.anamnese) {
+          doc.text(`Anamnese: ${this.anamnese || '-'}`, 10, y);
+          y += 10;
+        }
+        if (camposSelecionados.exameFisico) {
+          doc.text(`Exame Físico: ${this.exameFisico || '-'}`, 10, y);
+          y += 10;
+        }
+        if (camposSelecionados.solicitacaoExames) {
+          doc.text(`Solicitação de Exames: ${this.solicitacaoExames || '-'}`, 10, y);
+          y += 10;
+        }
+        if (camposSelecionados.orientacao) {
+          doc.text(`Orientação: ${this.orientacao || '-'}`, 10, y);
+          y += 10;
+        }
+        if (camposSelecionados.prescricao) {
+          doc.text(`Prescrição: ${this.prescricao || '-'}`, 10, y);
+          y += 10;
+        }
+        if (camposSelecionados.conduta) {
+          doc.text(`Conduta: ${this.conduta || '-'}`, 10, y);
+          y += 10;
+        }
+        if (camposSelecionados.cid10) {
+          doc.text(`CID-10: ${this.cid10 || '-'}`, 10, y);
+          y += 10;
+        }
+
+        const pageHeight = doc.internal.pageSize.getHeight();
+        doc.setFontSize(10);
+        doc.text('Clínica Médica UNICENTRO', 10, pageHeight - 15);
+        doc.text('Endereço: Alameda Élio Antonio Dalla Vecchia, 838 - CEP 85040-167 - Bairro - Vila Carli, Guarapuava - PR ', 10, pageHeight - 8);
+
+        doc.save(`atendimento_${this.nome}.pdf`);
+      };
     }
   });
 }
