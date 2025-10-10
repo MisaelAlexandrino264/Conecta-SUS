@@ -16,8 +16,8 @@ export interface Atendimento {
   conduta: string;
   cid10: string;
   status: string;
-  profissionalUid?: string;
-  profissionalNome?: string;
+  estagiarioUid?: string;
+  estagiarioNome?: string;
 }
 
 

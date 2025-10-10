@@ -32,21 +32,21 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label>Profissional da Saúde</mat-label>
+    <mat-label>Estagiario</mat-label>
     <input matInput
-           formControlName="profissionalNome"
-           [matAutocomplete]="autoProfissional"
-           (input)="onInputProfissional($event)">
-    <mat-autocomplete #autoProfissional="matAutocomplete">
-      <mat-option *ngFor="let profissional of profissionaisFiltrados" [value]="profissional.nome">
-        {{ profissional.nome }}
+           formControlName="estagiarioNome"
+           [matAutocomplete]="autoEstagiario"
+           (input)="onInputEstagiario($event)">
+    <mat-autocomplete #autoEstagiario="matAutocomplete">
+      <mat-option *ngFor="let estagiario of estagiariosFiltrados" [value]="estagiario.nome">
+        {{ estagiario.nome }}
       </mat-option>
     </mat-autocomplete>
-    <mat-error *ngIf="agendamentoForm.get('profissionalNome')?.hasError('required') && agendamentoForm.get('profissionalNome')?.touched">
-      O nome do profissional é obrigatório
+    <mat-error *ngIf="agendamentoForm.get('estagiarioNome')?.hasError('required') && agendamentoForm.get('estagiarioNome')?.touched">
+      O nome do estagiario é obrigatório
     </mat-error>
-    <mat-error *ngIf="agendamentoForm.get('profissionalNome')?.hasError('profissionalInvalido')">
-      Selecione um profissional válido da lista
+    <mat-error *ngIf="agendamentoForm.get('estagiarioNome')?.hasError('estagiarioInvalido')">
+      Selecione um estagiario válido da lista
     </mat-error>
   </mat-form-field>
 </mat-dialog-content>

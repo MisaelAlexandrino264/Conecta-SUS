@@ -17,17 +17,17 @@ export class AuthService {
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private router: Router
-  ) {}
+  ) { }
 
   async login(email: string, password: string) {
     try {
       const userCredential = await this.afAuth.signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
-  
+
       if (user) {
         const docRef = this.firestore.collection('users').doc(user.uid);
         const snapshot = await docRef.ref.get();
-  
+
         if (!snapshot.exists) {
           // Se não encontrou o usuário no Firestore
           await this.afAuth.signOut();
@@ -37,30 +37,30 @@ export class AuthService {
             text: 'Usuário removido do sistema. Entre em contato com o administrador.',
             confirmButtonColor: '#d33'
           });
-          
+
           return;
         }
-  
+
         this.router.navigate(['/home']);
       }
-  
+
     } catch (error: any) {
-      this.handleAuthError(error); 
+      this.handleAuthError(error);
     }
   }
-  
-  
+
+
 
   async registerInterno(email: string, password: string, departamento: string, nome: string, tipo: string): Promise<void> {
     const { initializeApp } = await import('firebase/app');
     const { getAuth, createUserWithEmailAndPassword } = await import('firebase/auth');
-    const app = initializeApp(environment.firebaseConfig, 'segundoApp'); 
+    const app = initializeApp(environment.firebaseConfig, 'segundoApp');
     const secondAuth = getAuth(app);
-  
+
     try {
       const userCredential = await createUserWithEmailAndPassword(secondAuth, email, password);
       const newUser = userCredential.user;
-  
+
       if (newUser) {
         await this.firestore.collection('users').doc(newUser.uid).set({
           uid: newUser.uid,
@@ -75,7 +75,7 @@ export class AuthService {
           text: 'Usuário cadastrado com sucesso!',
           confirmButtonColor: '#0d47a1'
         });
-        
+
       }
     } catch (error: any) {
       console.error("Erro ao registrar novo usuário internamente:", error);
@@ -85,20 +85,20 @@ export class AuthService {
         text: error?.message || 'Erro desconhecido.',
         confirmButtonColor: '#d33'
       });
-      
+
     }
   }
-  
-  
-  
-  
+
+
+
+
   async logout() {
     await this.afAuth.signOut();
     this.router.navigate(['/login']);
   }
 
   getUser(): Observable<any> {
-    return this.afAuth.authState; 
+    return this.afAuth.authState;
   }
 
   async atualizarUsuario(uid: string, nome: string, tipo: string, departamento: string): Promise<void> {
@@ -120,33 +120,33 @@ export class AuthService {
 
   async getTipoUsuario(): Promise<string | null> {
     if (this.tipoUsuario) return this.tipoUsuario;
-  
+
     const currentUser = await this.afAuth.currentUser;
     if (!currentUser) return null;
-  
+
     const snapshot = await this.firestore.collection('users').doc(currentUser.uid).get().toPromise();
-    const data = snapshot?.data() as { tipo?: string } | undefined; 
+    const data = snapshot?.data() as { tipo?: string } | undefined;
     this.tipoUsuario = data?.tipo || null;
     return this.tipoUsuario;
   }
-  
+
   async getUsuarioLogado(): Promise<any | null> {
     const currentUser = await this.afAuth.currentUser;
     if (!currentUser) return null;
-  
+
     const snapshot = await this.firestore.collection('users').doc(currentUser.uid).get().toPromise();
     return snapshot?.data() || null;
   }
-  
+
   enviarEmailRedefinicaoSenha(email: string): Promise<void> {
-  return this.afAuth.sendPasswordResetEmail(email);
-}
+    return this.afAuth.sendPasswordResetEmail(email);
+  }
 
   private handleAuthError(error: any) {
-    console.error("Erro de autenticação:", error); 
-  
+    console.error("Erro de autenticação:", error);
+
     let errorMsg = "Erro ao processar a solicitação. Tente novamente.";
-  
+
     if (error.code === 'auth/email-already-in-use') {
       errorMsg = "Este e-mail já está em uso!";
     } else if (error.code === 'auth/weak-password') {
@@ -160,7 +160,7 @@ export class AuthService {
     ) {
       errorMsg = "Email ou senha incorretos.";
     }
-  
+
     Swal.fire({
       icon: 'error',
       title: 'Erro de autenticação',
@@ -168,8 +168,17 @@ export class AuthService {
       confirmButtonColor: '#0d47a1'
     });
   }
-  
-  
-  
-  
+
+
+
+  async podeGerenciarEstagiarios(): Promise<boolean> {
+    const tipo = await this.getTipoUsuario();
+    if (!tipo) {
+      return false;
+    }
+    // A regra é para o Professor OU para a Secretaria
+    return tipo === 'Professor' || tipo === 'Secretaria';
+  }
+
+
 }
