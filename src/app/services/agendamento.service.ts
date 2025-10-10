@@ -16,8 +16,8 @@ export interface Agendamento {
   idade: number;
   pacienteId?: string; 
   uid?: string;
-  profissionalNome?: string;
-  profissionalUid?: string;
+  estagiarioNome?: string;
+  estagiarioUid?: string;
   status?: string;
 }
 
@@ -93,7 +93,7 @@ obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
 
       const q = query(this.colecaoAgendamentos,
         where('data', '==', dataString),
-        where('profissionalUid', '==', user.uid));
+        where('estagiarioUid', '==', user.uid));
 
       getDocs(q)
         .then((querySnapshot) => {
@@ -136,9 +136,9 @@ obterAgendamentosPorData(data: Date): Observable<Agendamento[]> {
 }
 
 
-async verificarDisponibilidade(profissionalUid: string, data: string, hora: string, agendamentoId?: string): Promise<boolean> {
+async verificarDisponibilidade(estagiarioUid: string, data: string, hora: string, agendamentoId?: string): Promise<boolean> {
   const q = query(this.colecaoAgendamentos,
-    where('profissionalUid', '==', profissionalUid),
+    where('estagiarioUid', '==', estagiarioUid),
     where('data', '==', data),
     where('hora', '==', hora)
   );
@@ -188,8 +188,8 @@ async verificarDisponibilidade(profissionalUid: string, data: string, hora: stri
       hora: agendamento.hora,
       nome: agendamento.nome,
       idade: agendamento.idade,
-      profissionalNome: agendamento.profissionalNome,
-      profissionalUid: agendamento.profissionalUid,
+      estagiarioNome: agendamento.estagiarioNome,
+      estagiarioUid: agendamento.estagiarioUid,
       status: agendamento.status ?? 'pendente'
     })
     .then(() => console.log("Agendamento atualizado com sucesso!"))

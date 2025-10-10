@@ -26,7 +26,7 @@ export class AtendimentoComponent implements OnInit {
   prescricao: string = '';
   conduta: string = '';
   cid10: string = '';
-  profissionalNome: string = '';
+  estagiarioNome: string = '';
   pacienteId: string | null = null;
 
 
@@ -60,7 +60,7 @@ export class AtendimentoComponent implements OnInit {
   
   async carregarUsuarioLogado(): Promise<void> {
     const usuario = await this.authService.getUsuarioLogado();
-    this.profissionalNome = usuario?.nome || 'Desconhecido';
+    this.estagiarioNome = usuario?.nome || 'Desconhecido';
   }
   
   
@@ -91,8 +91,8 @@ export class AtendimentoComponent implements OnInit {
       conduta: this.conduta,
       cid10: this.cid10,
       status: 'Finalizado',
-      profissionalUid: usuario.uid,
-      profissionalNome: usuario.nome
+      estagiarioUid: usuario.uid,
+      estagiarioNome: usuario.nome
     };
   
     await this.atendimentoService.salvarAtendimento(atendimento);

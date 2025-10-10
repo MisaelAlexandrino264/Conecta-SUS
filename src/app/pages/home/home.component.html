@@ -3,13 +3,12 @@
   <h2>Bem-vindo ao Interpront</h2>
 
   <div class="main-layout">
-    <!-- Coluna Esquerda (Horário e Nome do Paciente) -->
     <div class="left-column">
       <h3>Atendimentos</h3>
       <div *ngFor="let agendamento of agendamentos" class="appointment">
         <p><strong>Horário:</strong> {{ agendamento.hora }}</p>
         <p><strong>Paciente:</strong> {{ agendamento.nome }}</p>
-        <p *ngIf="tipoUsuario === 'Secretaria'"><strong>Profissional:</strong> {{ agendamento.profissionalNome }}</p>
+        <p *ngIf="tipoUsuario === 'Secretaria'"><strong>Estagiário:</strong> {{ agendamento.estagiarioNome }}</p>
 
         
         <div class="appointment-actions">
@@ -17,7 +16,7 @@
             mat-raised-button 
             class="custom-btn" 
             (click)="iniciarAtendimento(agendamento)" 
-            *ngIf="tipoUsuario === 'Profissional da saúde' && !dataNoPassado"
+            *ngIf="tipoUsuario === 'Estagiário' && !dataNoPassado"
             [disabled]="agendamento.status !== 'pendente'">
             Iniciar Atendimento
           </button>
@@ -39,7 +38,6 @@
       </div>
     </div>
 
-    <!-- Coluna Direita (Calendário) -->
     <div class="right-column">
       <mat-card class="demo-inline-calendar-card">
         <mat-calendar [(selected)]="selected" (selectedChange)="buscarAgendamentos(selected)" [dateFilter]="filtroDatas"></mat-calendar>

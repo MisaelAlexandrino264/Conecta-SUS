@@ -46,6 +46,7 @@ import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 import {VisualizarPacienteComponent} from './pages/pacientes/visualizar-paciente/visualizar-paciente.component';
 import { ExportarPdfModalComponent } from './components/exportar-pdf-modal/exportar-pdf-modal.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { EstagiariosComponent } from './pages/estagiarios/estagiarios.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     UsuariosComponent,
     VisualizarPacienteComponent,
     ExportarPdfModalComponent,
+    EstagiariosComponent,
     
   ],
   imports: [
