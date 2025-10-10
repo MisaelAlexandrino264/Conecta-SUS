@@ -8,6 +8,7 @@ import { AtendimentoComponent } from './pages/atendimento/atendimento.component'
 import { PacientesComponent } from './pages/pacientes/pacientes.component';
 import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 import { VisualizarPacienteComponent } from './pages/pacientes/visualizar-paciente/visualizar-paciente.component';
+import { EstagiariosComponent } from './pages/estagiarios/estagiarios.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'atendimento', component: AtendimentoComponent, canActivate: [AuthGuard] },
   { path: 'pacientes', component: PacientesComponent, canActivate: [AuthGuard] },
   { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
+  { path: 'estagiarios', component: EstagiariosComponent },
   { path: 'visualizar-paciente', component: VisualizarPacienteComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

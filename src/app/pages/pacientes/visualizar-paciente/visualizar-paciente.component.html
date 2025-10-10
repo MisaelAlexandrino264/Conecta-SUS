@@ -32,11 +32,11 @@
 
 <ng-container *ngFor="let atendimento of atendimentos">
   <div *ngIf="atendimento.id" class="atendimento-card">
-    <button *ngIf="tipoUsuario === 'Profissional da saúde'" mat-icon-button (click)="toggleAtendimento(atendimento.id)" aria-label="Toggle atendimento">
+    <button *ngIf="tipoUsuario === 'Estagiário'" mat-icon-button (click)="toggleAtendimento(atendimento.id)" aria-label="Toggle atendimento">
       <mat-icon>{{ atendimentosExpandido[atendimento.id] ? 'expand_less' : 'expand_more' }}</mat-icon>
     </button>
     <span class="toggle-label">
-      {{ atendimento.data | date: 'dd/MM/yyyy' }} - {{ atendimento.nome }} ({{ atendimento.profissionalNome }})
+      {{ atendimento.data | date: 'dd/MM/yyyy' }} - {{ atendimento.nome }} ({{ atendimento.estagiarioNome }})
     </span>
 
     <div *ngIf="atendimentosExpandido[atendimento.id]" class="detalhes-atendimento">
