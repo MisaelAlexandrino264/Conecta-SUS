@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, updateDoc, doc, query, where, getDocs } from '@angular/fire/firestore';
-
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 export interface Atendimento {
   id?: string;
-  pacienteId: string; 
+  data: string;
+  hora?: string;
   nome: string;
   idade: number;
-  data: string; 
+  pacienteId: string;
+  estagiarioNome: string;
+  estagiarioUid: string;
   anamnese: string;
   exameFisico: string;
   solicitacaoExames: string;
@@ -15,40 +20,41 @@ export interface Atendimento {
   prescricao: string;
   conduta: string;
   cid10: string;
-  status: string;
-  estagiarioUid?: string;
-  estagiarioNome?: string;
+  status: 'pendente' | 'aceito' | 'rejeitado';
+  observacaoProfessor?: string;
 }
-
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class AtendimentoService {
-  private colecaoAtendimentos = collection(this.firestore, 'atendimentos');
+  private atendimentosCollection: AngularFirestoreCollection<Atendimento>;
 
-  constructor(private firestore: Firestore) {}
-
-  async salvarAtendimento(atendimento: Atendimento): Promise<void> {
-    await addDoc(this.colecaoAtendimentos, atendimento);
-    console.log('Atendimento salvo com sucesso!');
+  constructor(private firestore: AngularFirestore, private authService: AuthService) {
+    this.atendimentosCollection = this.firestore.collection<Atendimento>('atendimentos');
   }
 
-  async marcarAtendimentoComoRealizado(agendamentoId: string): Promise<void> {
-    const agendamentoRef = doc(this.firestore, `agenda/${agendamentoId}`);
-    await updateDoc(agendamentoRef, { status: 'Finalizado' });
+  criarAtendimento(atendimento: Atendimento): Promise<any> {
+  const { id, ...data } = atendimento; 
+  return this.atendimentosCollection.add(data);
+}
+
+  avaliarAtendimento(id: string, status: 'aceito' | 'rejeitado', observacao: string): Promise<void> {
+    return this.atendimentosCollection.doc(id).update({
+      status: status,
+      observacaoProfessor: observacao
+    });
   }
 
   async obterAtendimentosPorPaciente(pacienteId: string): Promise<Atendimento[]> {
-  const q = query(
-    collection(this.firestore, 'atendimentos'),
-    where('pacienteId', '==', pacienteId)
-  );
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  } as Atendimento));
-}
+    const snapshot = await this.firestore.collection<Atendimento>('atendimentos', ref => 
+      ref.where('pacienteId', '==', pacienteId)
+    ).get().toPromise();
+  
+    if (!snapshot) {
+      return [];
+    }
+  
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
 }

@@ -90,13 +90,12 @@ export class AtendimentoComponent implements OnInit {
       prescricao: this.prescricao,
       conduta: this.conduta,
       cid10: this.cid10,
-      status: 'Finalizado',
+      status: 'pendente',
       estagiarioUid: usuario.uid,
-      estagiarioNome: usuario.nome
+      estagiarioNome: usuario.nome,
     };
   
-    await this.atendimentoService.salvarAtendimento(atendimento);
-    await this.atendimentoService.marcarAtendimentoComoRealizado(this.id);
+  await this.atendimentoService.criarAtendimento(atendimento);
   
     this.router.navigate(['/home']);
     Swal.fire('Finalizado!', 'Atendimento realizado com sucesso.', 'success');

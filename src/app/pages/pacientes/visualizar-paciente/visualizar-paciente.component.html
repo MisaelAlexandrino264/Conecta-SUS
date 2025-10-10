@@ -26,29 +26,56 @@
   </div>
 
   <h2 style="margin-top: 32px;">Atendimentos</h2>
-<div *ngIf="atendimentos.length === 0">
-  <p>Este paciente ainda não possui atendimentos registrados.</p>
-</div>
-
-<ng-container *ngFor="let atendimento of atendimentos">
-  <div *ngIf="atendimento.id" class="atendimento-card">
-    <button *ngIf="tipoUsuario === 'Estagiário'" mat-icon-button (click)="toggleAtendimento(atendimento.id)" aria-label="Toggle atendimento">
-      <mat-icon>{{ atendimentosExpandido[atendimento.id] ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </button>
-    <span class="toggle-label">
-      {{ atendimento.data | date: 'dd/MM/yyyy' }} - {{ atendimento.nome }} ({{ atendimento.estagiarioNome }})
-    </span>
-
-    <div *ngIf="atendimentosExpandido[atendimento.id]" class="detalhes-atendimento">
-      <p><strong>Anamnese:</strong> {{ atendimento.anamnese }}</p>
-      <p><strong>Exame Físico:</strong> {{ atendimento.exameFisico }}</p>
-      <p><strong>Solicitação de Exames:</strong> {{ atendimento.solicitacaoExames }}</p>
-      <p><strong>Orientação:</strong> {{ atendimento.orientacao }}</p>
-      <p><strong>Prescrição:</strong> {{ atendimento.prescricao }}</p>
-      <p><strong>Conduta:</strong> {{ atendimento.conduta}}</p>
-      <p><strong>CID-10:</strong> {{ atendimento.cid10 }}</p>
-    </div>
+  <div *ngIf="atendimentos.length === 0">
+    <p>Este paciente ainda não possui atendimentos registrados.</p>
   </div>
-</ng-container>
 
+  <ng-container *ngFor="let atendimento of atendimentos">
+    <div *ngIf="atendimento.id" class="atendimento-card" [ngClass]="atendimento.status">
+      <button *ngIf="tipoUsuario === 'Estagiário' || tipoUsuario === 'Professor'" mat-icon-button (click)="toggleAtendimento(atendimento.id)" aria-label="Toggle atendimento">
+        <mat-icon>{{ atendimentosExpandido[atendimento.id] ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </button>
+      <span class="toggle-label">
+        {{ atendimento.data | date: 'dd/MM/yyyy' }} - {{ atendimento.nome }} ({{ atendimento.estagiarioNome }})
+        <mat-chip *ngIf="atendimento.status !== 'pendente'" [ngClass]="atendimento.status">{{ atendimento.status | titlecase }}</mat-chip>
+      </span>
+
+      <div *ngIf="atendimentosExpandido[atendimento.id]" class="detalhes-atendimento">
+        <p><strong>Anamnese:</strong> {{ atendimento.anamnese }}</p>
+        <p><strong>Exame Físico:</strong> {{ atendimento.exameFisico }}</p>
+        <p><strong>Solicitação de Exames:</strong> {{ atendimento.solicitacaoExames }}</p>
+        <p><strong>Orientação:</strong> {{ atendimento.orientacao }}</p>
+        <p><strong>Prescrição:</strong> {{ atendimento.prescricao }}</p>
+        <p><strong>Conduta:</strong> {{ atendimento.conduta}}</p>
+        <p><strong>CID-10:</strong> {{ atendimento.cid10 }}</p>
+        
+        <!-- ============================================= -->
+        <!--      SEÇÃO DE AVALIAÇÃO DO PROFESSOR          -->
+        <!-- ============================================= -->
+        <div *ngIf="tipoUsuario === 'Professor' && atendimento.id" class="professor-review-section">
+          <mat-divider></mat-divider>
+          <h4>Avaliação do Professor</h4>
+
+          <!-- MOSTRA O FORMULÁRIO SE O ATENDIMENTO ESTIVER PENDENTE -->
+          <ng-container *ngIf="atendimento.status === 'pendente'; else jaAvaliado">
+            <mat-form-field appearance="fill">
+              <mat-label>Observações</mat-label>
+              <textarea matInput [(ngModel)]="observacoes[atendimento.id]" rows="3"></textarea>
+            </mat-form-field>
+            <div class="botoes-avaliacao">
+              <button mat-raised-button color="warn" (click)="salvarAvaliacao(atendimento, 'rejeitado')">Rejeitar</button>
+              <button mat-raised-button color="primary" (click)="salvarAvaliacao(atendimento, 'aceito')">Aceitar</button>
+            </div>
+          </ng-container>
+          
+          <!-- MOSTRA O RESULTADO SE JÁ FOI AVALIADO -->
+          <ng-template #jaAvaliado>
+            <p><strong>Status:</strong> <span class="status-texto" [ngClass]="atendimento.status">{{ atendimento.status | titlecase }}</span></p>
+            <p><strong>Observação:</strong> {{ atendimento.observacaoProfessor || 'Nenhuma observação foi adicionada.' }}</p>
+          </ng-template>
+        </div>
+
+      </div>
+    </div>
+  </ng-container>
 </div>
