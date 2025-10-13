@@ -1,7 +1,7 @@
 // src/app/services/usuario.service.ts
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface Usuario {
@@ -16,21 +16,32 @@ export interface Usuario {
   providedIn: 'root'
 })
 export class UsuarioService {
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firestore: AngularFirestore) { }
 
   obterUsuarios(): Observable<Usuario[]> {
     return this.firestore.collection<Usuario>('users').valueChanges();
   }
 
-async excluirUsuario(uid: string): Promise<void> {
-  try {
-    await this.firestore.collection('users').doc(uid).delete();
-    console.log(`Usuário com UID ${uid} excluído do Firestore.`);
-  } catch (error) {
-    console.error("Erro ao excluir usuário do Firestore:", error);
-    throw error;
+  async excluirUsuario(uid: string): Promise<void> {
+    try {
+      await this.firestore.collection('users').doc(uid).delete();
+      console.log(`Usuário com UID ${uid} excluído do Firestore.`);
+    } catch (error) {
+      console.error("Erro ao excluir usuário do Firestore:", error);
+      throw error;
+    }
   }
-}
 
-  
+
+  obterUsuariosPorTipo(tipo: string): Observable<Usuario[]> {
+    return this.firestore.collection<Usuario>('users', ref => ref.where('tipo', '==', tipo))
+      .snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as Usuario;
+          const uid = a.payload.doc.id;
+          return { ...data, uid };
+        }))
+      );
+  }
+
 }

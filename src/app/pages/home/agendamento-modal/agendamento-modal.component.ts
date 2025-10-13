@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors }
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendamentoService, Agendamento } from '../../../services/agendamento.service';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
-import { ProfissionalService, Profissional } from '../../../services/profissional.service';
+import { EstagiarioService, Estagiario } from '../../../services/estagiario.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 export class AgendamentoModalComponent implements OnInit {
   agendamentoForm!: FormGroup;
   pacientesFiltrados: Paciente[] = [];
-  profissionaisFiltrados: Profissional[] = [];
+  estagiariosFiltrados: Estagiario[] = [];
   idade: number | null = null;
   id?: string;
 
@@ -24,24 +24,23 @@ export class AgendamentoModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { dataSelecionada: Date, agendamento?: Agendamento },
     private agendamentoService: AgendamentoService,
     private pacienteService: PacienteService,
-    private profissionalService: ProfissionalService
+    private estagiarioService: EstagiarioService
   ) {}
 
   ngOnInit(): void {
     this.agendamentoForm = this.fb.group({
       hora: ['', Validators.required],
       nome: ['', Validators.required],
-      profissionalNome: ['', Validators.required]
+      estagiarioNome: ['', Validators.required]
     });
   
     if (this.data.agendamento) {
-      const { hora, nome, profissionalNome } = this.data.agendamento;
+      const { hora, nome, estagiarioNome } = this.data.agendamento;
       this.idade = this.data.agendamento.idade;
       this.id = this.data.agendamento.id;
   
-      this.agendamentoForm.patchValue({ hora, nome, profissionalNome });
+      this.agendamentoForm.patchValue({ hora, nome, estagiarioNome });
   
-      // Carrega paciente para que o nome seja considerado válido
       this.pacienteService.buscarPacientePorNome(nome).subscribe(pacientes => {
         this.pacientesFiltrados = pacientes;
   
@@ -52,15 +51,14 @@ export class AgendamentoModalComponent implements OnInit {
         this.agendamentoForm.get('nome')?.updateValueAndValidity();
       });
   
-      // Carrega profissional para que o nome seja considerado válido
-      this.profissionalService.buscarProfissionaisPorNome(profissionalNome || '').subscribe(profissionais => {
-        this.profissionaisFiltrados = profissionais;
+      this.estagiarioService.buscarEstagiariosPorNome(estagiarioNome || '').subscribe(estagiarios => {
+        this.estagiariosFiltrados = estagiarios;
   
-        this.agendamentoForm.get('profissionalNome')?.setValidators([
+        this.agendamentoForm.get('estagiarioNome')?.setValidators([
           Validators.required,
-          this.profissionalValidoValidator(this.profissionaisFiltrados)
+          this.estagiarioValidoValidator(this.estagiariosFiltrados)
         ]);
-        this.agendamentoForm.get('profissionalNome')?.updateValueAndValidity();
+        this.agendamentoForm.get('estagiarioNome')?.updateValueAndValidity();
       });
     }
   }
@@ -83,20 +81,20 @@ export class AgendamentoModalComponent implements OnInit {
     });
   }
 
-  buscarProfissionais(nome: string): void {
+  buscarEstagiarios(nome: string): void {
     if (nome.length < 2) {
-      this.profissionaisFiltrados = [];
+      this.estagiariosFiltrados = [];
       return;
     }
 
-    this.profissionalService.buscarProfissionaisPorNome(nome).subscribe(profissionais => {
-      this.profissionaisFiltrados = profissionais;
+    this.estagiarioService.buscarEstagiariosPorNome(nome).subscribe(estagiarios => {
+      this.estagiariosFiltrados = estagiarios;
 
-      this.agendamentoForm.get('profissionalNome')?.setValidators([
+      this.agendamentoForm.get('estagiarioNome')?.setValidators([
         Validators.required,
-        this.profissionalValidoValidator(this.profissionaisFiltrados)
+        this.estagiarioValidoValidator(this.estagiariosFiltrados)
       ]);
-      this.agendamentoForm.get('profissionalNome')?.updateValueAndValidity();
+      this.agendamentoForm.get('estagiarioNome')?.updateValueAndValidity();
     });
   }
 
@@ -107,10 +105,10 @@ export class AgendamentoModalComponent implements OnInit {
     };
   }
 
-  profissionalValidoValidator(profissionais: Profissional[]) {
+  estagiarioValidoValidator(estagiarios: Estagiario[]) {
     return (control: AbstractControl): ValidationErrors | null => {
       const nome = control.value;
-      return profissionais.some(p => p.nome === nome) ? null : { profissionalInvalido: true };
+      return estagiarios.some(p => p.nome === nome) ? null : { estagiarioInvalido: true };
     };
   }
 
@@ -131,17 +129,17 @@ export class AgendamentoModalComponent implements OnInit {
       return;
     }
   
-    const { hora, nome, profissionalNome } = this.agendamentoForm.value;
+    const { hora, nome, estagiarioNome } = this.agendamentoForm.value;
     const paciente = this.pacientesFiltrados.find(p => p.nome === nome);
-    const profissional = this.profissionaisFiltrados.find(p => p.nome === profissionalNome);
+    const estagiario = this.estagiariosFiltrados.find(p => p.nome === estagiarioNome);
   
-    if (!paciente || !profissional) return;
+    if (!paciente || !estagiario) return;
   
     this.idade = this.calcularIdade(paciente.dataNascimento);
     const dataAgendamento = this.data.dataSelecionada.toISOString().split('T')[0];
   
     const podeAgendar = await this.agendamentoService.verificarDisponibilidade(
-      profissional.uid,
+      estagiario.uid,
       dataAgendamento,
       hora,
       this.id 
@@ -151,7 +149,7 @@ export class AgendamentoModalComponent implements OnInit {
       Swal.fire({
         icon: 'warning',
         title: 'Erro ao agendar',
-        text: 'Esse profissional já tem um agendamento nesse horário.',
+        text: 'Esse estagiario já tem um agendamento nesse horário.',
         confirmButtonColor: '#0d47a1'
       });
       return;
@@ -164,8 +162,8 @@ export class AgendamentoModalComponent implements OnInit {
       nome,
       idade: this.idade,
       pacienteId: paciente.id, 
-      profissionalNome,
-      profissionalUid: profissional.uid,
+      estagiarioNome,
+      estagiarioUid: estagiario.uid,
       status: 'pendente' 
     };
   
@@ -185,8 +183,8 @@ export class AgendamentoModalComponent implements OnInit {
     this.buscarPacientes(nome);
   }
 
-  onInputProfissional(event: Event): void {
+  onInputEstagiario(event: Event): void {
     const nome = (event.target as HTMLInputElement).value;
-    this.buscarProfissionais(nome);
+    this.buscarEstagiarios(nome);
   }
 }

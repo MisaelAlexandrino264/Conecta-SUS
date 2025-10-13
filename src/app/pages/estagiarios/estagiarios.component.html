@@ -1,0 +1,52 @@
+<app-menu></app-menu>
+
+<div class="container">
+  <div class="header">
+    <h1>Estagiários</h1>
+    <button *ngIf="temPermissao" mat-raised-button class="add-button" (click)="irParaCadastroEstagiario()">
+      <mat-icon>add</mat-icon> Novo Estagiário
+    </button>
+  </div>
+
+  <div class="search-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar estagiário</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Digite o nome" #input>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="table-container mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort class="usuarios-table">
+
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+        <td mat-cell *matCellDef="let usuario"> {{usuario.nome}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+        <td mat-cell *matCellDef="let usuario"> {{usuario.email}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef class="acoes-header">Ações</th>
+        <td mat-cell *matCellDef="let usuario">
+          <div *ngIf="temPermissao" class="acoes-icons">
+            <mat-icon class="edit-icon" (click)="editarUsuario(usuario)">edit</mat-icon>
+            <mat-icon class="delete-icon" (click)="excluirUsuario(usuario)">delete</mat-icon>
+          </div>
+        </td>
+      </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">Nenhum estagiário encontrado com o filtro "{{input.value}}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Selecione a página"></mat-paginator>
+  </div>
+</div>

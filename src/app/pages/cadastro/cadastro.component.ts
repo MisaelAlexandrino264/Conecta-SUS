@@ -1,22 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
-
 
 @Component({
   selector: 'app-cadastro',
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.scss']
 })
-export class CadastroComponent {
+export class CadastroComponent implements OnInit {
   cadastroForm: FormGroup;
   senhaInvalida: boolean = false;
   formInvalido: boolean = false;
-  editando = false;
-  uidEditando: string | null = null;
+  isEditMode = false;
+  userId: string | null = null;
+  pageTitle = 'Cadastro de Usuário'; // Título dinâmico da página
 
   constructor(
     private fb: FormBuilder,
@@ -24,6 +23,16 @@ export class CadastroComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
+
+    this.cadastroForm = this.fb.group({}); 
+  }
+
+  ngOnInit(): void {
+    this.buildForm();
+    this.checkRouteForContext();
+  }
+
+  private buildForm(): void {
     this.cadastroForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       nome: ['', Validators.required],
@@ -35,28 +44,35 @@ export class CadastroComponent {
 
     this.cadastroForm.get('password')?.valueChanges.subscribe(() => this.verificarSenha());
     this.cadastroForm.get('confirmPassword')?.valueChanges.subscribe(() => this.verificarSenha());
+  }
 
-    // Verifica se está editando um usuário
-    const usuario = history.state.usuario;
-    if (usuario) {
-      this.editando = true;
-      this.uidEditando = usuario.uid;
+  private checkRouteForContext(): void {
+    this.userId = this.route.snapshot.paramMap.get('id');
+    this.isEditMode = !!this.userId;
 
-      this.cadastroForm.patchValue({
-        email: usuario.email,
-        nome: usuario.nome,
-        tipo: usuario.tipo,
-        departamento: usuario.departamento
+    const contexto = this.route.snapshot.queryParamMap.get('contexto');
+
+    if (contexto === 'estagiario') {
+      // Se for o contexto de estagiário, adapta a página
+      this.pageTitle = this.isEditMode ? 'Dados do Estagiário' : 'Cadastrar Estagiário';
+      this.cadastroForm.get('tipo')?.setValue('Estagiário');
+      this.cadastroForm.get('tipo')?.disable();
+    }
+
+    if (this.isEditMode && this.userId) {
+      this.authService.getUsuarioLogado().then(usuario => { 
+          if (usuario) { 
+              this.cadastroForm.patchValue(usuario);
+              this.cadastroForm.get('email')?.disable(); 
+              this.cadastroForm.get('password')?.disable(); 
+              this.cadastroForm.get('confirmPassword')?.disable();
+          }
       });
-
-      this.cadastroForm.get('email')?.disable(); 
-      this.cadastroForm.get('password')?.disable(); 
-      this.cadastroForm.get('confirmPassword')?.disable();
     }
   }
 
   verificarSenha() {
-    if (this.editando) return;
+    if (this.isEditMode) return;
   
     const password = this.cadastroForm.get('password')?.value;
     const confirmPassword = this.cadastroForm.get('confirmPassword')?.value;
@@ -76,7 +92,6 @@ export class CadastroComponent {
     }
   }
   
-
   async onSubmit() {
     this.formInvalido = this.cadastroForm.invalid || this.senhaInvalida;
 
@@ -88,8 +103,8 @@ export class CadastroComponent {
     const { email, password, departamento, nome, tipo } = this.cadastroForm.getRawValue();
 
     try {
-      if (this.editando && this.uidEditando) {
-        await this.authService.atualizarUsuario(this.uidEditando, nome, tipo, departamento);
+      if (this.isEditMode && this.userId) {
+        await this.authService.atualizarUsuario(this.userId, nome, this.cadastroForm.get('tipo')?.value, departamento);
          Swal.fire({
               icon: 'success',
               title: 'Sucesso!',
@@ -97,10 +112,15 @@ export class CadastroComponent {
               confirmButtonColor: '#0d47a1'
           });
       } else {
-        await this.authService.registerInterno(email, password, departamento, nome, tipo);
+        await this.authService.registerInterno(email, password, departamento, nome, this.cadastroForm.get('tipo')?.value);
       }
 
-      this.router.navigate(['/usuarios']);
+    
+      if (this.route.snapshot.queryParamMap.get('contexto') === 'estagiario') {
+          this.router.navigate(['/estagiarios']);
+      } else {
+          this.router.navigate(['/usuarios']);
+      }
     } catch (error) {
       console.error('Erro ao salvar usuário:', error);
     }
@@ -118,9 +138,12 @@ export class CadastroComponent {
       cancelButtonText: 'Continuar preenchendo'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.router.navigate(['/usuarios']);
+        if (this.route.snapshot.queryParamMap.get('contexto') === 'estagiario') {
+            this.router.navigate(['/estagiarios']);
+        } else {
+            this.router.navigate(['/usuarios']);
+        }
       }
     });
   }
-  
 }
