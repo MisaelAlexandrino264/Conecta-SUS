@@ -1,26 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrl: './menu.component.scss'
+  styleUrls: ['./menu.component.scss']
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit, OnDestroy {
+  // Subject para gerenciar o ciclo de vida das inscrições
+  private destroy$ = new Subject<void>();
   tipoUsuario: string | null = null;
   
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.tipoUsuario = this.authService.getTipoUsuarioLocal();
-  
-    if (!this.tipoUsuario) {
-      this.authService.getTipoUsuario().then(tipo => {
-        this.tipoUsuario = tipo;
-      });
-    }
+    // Escuta as informações do usuário logado a partir do AuthService
+    this.authService.usuarioLogado$.pipe(
+      takeUntil(this.destroy$) // Garante que a inscrição será finalizada ao sair
+    ).subscribe(usuario => {
+      if (usuario) {
+        this.tipoUsuario = usuario.tipo;
+      } else {
+        this.tipoUsuario = null;
+      }
+    });
   }
-  
+
+  // Método chamado quando o componente é destruído (ex: ao deslogar)
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   logout() {
     this.authService.logout();  

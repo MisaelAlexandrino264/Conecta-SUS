@@ -6,6 +6,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth.service';
+import { first } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-estagiarios',
@@ -36,14 +38,15 @@ export class EstagiariosComponent implements OnInit {
     });
   }
 
-  async verificarPermissao() {
-    this.temPermissao = await this.authService.podeGerenciarEstagiarios();
-
-    if (!this.temPermissao) {
-      this.router.navigate(['/home']);
-      Swal.fire('Acesso Negado', 'Você não tem permissão para acessar esta página.', 'error');
-    }
+ async verificarPermissao() {
+  // Ajuste para lidar com o Observable
+  this.temPermissao = await firstValueFrom(this.authService.podeGerenciarEstagiarios());
+  
+  if (!this.temPermissao) {
+    this.router.navigate(['/home']);
+    Swal.fire('Acesso Negado', 'Você não tem permissão para acessar esta página.', 'error');
   }
+}
 
 
   irParaCadastro(): void {

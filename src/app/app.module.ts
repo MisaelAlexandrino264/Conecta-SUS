@@ -47,6 +47,11 @@ import {VisualizarPacienteComponent} from './pages/pacientes/visualizar-paciente
 import { ExportarPdfModalComponent } from './components/exportar-pdf-modal/exportar-pdf-modal.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { EstagiariosComponent } from './pages/estagiarios/estagiarios.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { AvaliacaoAtendimentoComponent } from './pages/avaliacao-atendimento/avaliacao-atendimento.component';
+import { MatChipsModule } from '@angular/material/chips';
+import { HistoricoAtendimentosComponent } from './pages/historico-atendimentos/historico-atendimentos.component';
+
 
 @NgModule({
   declarations: [
@@ -63,6 +68,9 @@ import { EstagiariosComponent } from './pages/estagiarios/estagiarios.component'
     VisualizarPacienteComponent,
     ExportarPdfModalComponent,
     EstagiariosComponent,
+    AvaliacaoAtendimentoComponent,
+    HistoricoAtendimentosComponent,
+    
     
   ],
   imports: [
@@ -89,7 +97,9 @@ import { EstagiariosComponent } from './pages/estagiarios/estagiarios.component'
     MatSelectModule,
     MatAutocompleteModule,
     MatCheckboxModule,
-    FormsModule
+    FormsModule,
+    MatDividerModule,
+     MatChipsModule,
     
   ],
   providers: [

@@ -41,4 +41,61 @@
   }
 }
 
-  
+// Adicione estes estilos ao final do seu arquivo .scss
+
+// Estilos para a nova seção de avaliação
+.professor-review-section {
+  margin-top: 20px;
+  padding-top: 16px;
+
+  h4 {
+    color: #0d47a1;
+    margin-bottom: 12px;
+  }
+
+  .mat-form-field {
+    width: 100%;
+  }
+
+  .botoes-avaliacao {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+  }
+}
+
+// Estilos para o status do atendimento (o chip e o texto)
+.atendimento-card {
+  // Adiciona uma borda colorida baseada no status
+  &.aceito {
+    border-left: 4px solid #4CAF50; // Verde
+  }
+  &.rejeitado {
+    border-left: 4px solid #F44336; // Vermelho
+  }
+}
+
+.mat-chip {
+  margin-left: 12px;
+  height: 24px;
+  font-size: 12px;
+  &.aceito {
+    background-color: #4CAF50 !important;
+    color: white !important;
+  }
+  &.rejeitado {
+    background-color: #F44336 !important;
+    color: white !important;
+  }
+}
+
+.status-texto {
+  font-weight: bold;
+  &.aceito {
+    color: #4CAF50;
+  }
+  &.rejeitado {
+    color: #F44336;
+  }
+}  

@@ -1,62 +1,72 @@
 <app-menu></app-menu>
 
-<div class="content">
-  <div class="header">
-    <h2>Atendimento</h2>
+<div class="atendimento-container">
+  <!-- Cabeçalho com os dados (sem o card) -->
+  <div class="info-header">
+    <h2>Dados do Atendimento</h2>
+    <p><strong>Paciente:</strong> {{ nome || 'Carregando...' }}</p>
+    <p><strong>Idade:</strong> {{ idade ? idade + ' anos' : 'Carregando...' }}</p>
+    <p><strong>Estagiário:</strong> {{ estagiarioNome || 'Carregando...' }}</p>
   </div>
 
-  <div class="patient-info">
-    <p><strong>Nome:</strong> {{ nome }}</p>
-    <p><strong>Idade:</strong> {{ idade }} anos</p>
-    <p><strong>Estagiario:</strong> {{ estagiarioNome }}</p>
-  </div>
-
-  <form>
-    <div class="input-row">
-      <mat-form-field class="half-width" appearance="outline">
+  <!-- Formulário com a estrutura de colunas -->
+  <form [formGroup]="atendimentoForm" (ngSubmit)="salvarAtendimento()" class="atendimento-form">
+    
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
         <mat-label>Anamnese</mat-label>
-        <textarea matInput [(ngModel)]="anamnese" name="anamnese"></textarea>
+        <textarea matInput formControlName="anamnese" rows="5"></textarea>
+        <mat-error *ngIf="atendimentoForm.get('anamnese')?.touched && atendimentoForm.get('anamnese')?.hasError('required')">
+          Este campo é obrigatório.
+        </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="half-width" appearance="outline">
+      <mat-form-field appearance="outline" class="form-field">
         <mat-label>Exame Físico</mat-label>
-        <textarea matInput [(ngModel)]="exameFisico" name="exameFisico"></textarea>
+        <textarea matInput formControlName="exameFisico" rows="5"></textarea>
+        <mat-error *ngIf="atendimentoForm.get('exameFisico')?.touched && atendimentoForm.get('exameFisico')?.hasError('required')">
+          Este campo é obrigatório.
+        </mat-error>
       </mat-form-field>
     </div>
 
-    <div class="input-row">
-      <mat-form-field class="half-width" appearance="outline">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
         <mat-label>Solicitação de Exames</mat-label>
-        <textarea matInput [(ngModel)]="solicitacaoExames" name="solicitacaoExames"></textarea>
+        <textarea matInput formControlName="solicitacaoExames" rows="5"></textarea>
       </mat-form-field>
 
-      <mat-form-field class="half-width" appearance="outline">
+      <mat-form-field appearance="outline" class="form-field">
         <mat-label>Orientação</mat-label>
-        <textarea matInput [(ngModel)]="orientacao" name="orientacao"></textarea>
+        <textarea matInput formControlName="orientacao" rows="5"></textarea>
       </mat-form-field>
     </div>
 
-    <div class="input-row">
-      <mat-form-field class="half-width" appearance="outline">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
         <mat-label>Prescrição</mat-label>
-        <textarea matInput [(ngModel)]="prescricao" name="prescricao"></textarea>
+        <textarea matInput formControlName="prescricao" rows="5"></textarea>
       </mat-form-field>
 
-      <mat-form-field class="half-width" appearance="outline">
+      <mat-form-field appearance="outline" class="form-field">
         <mat-label>Conduta</mat-label>
-        <textarea matInput [(ngModel)]="conduta" name="conduta"></textarea>
+        <textarea matInput formControlName="conduta" rows="5"></textarea>
+        <mat-error *ngIf="atendimentoForm.get('conduta')?.touched && atendimentoForm.get('conduta')?.hasError('required')">
+          Este campo é obrigatório.
+        </mat-error>
       </mat-form-field>
     </div>
 
-    <mat-form-field class="full-width" appearance="outline">
+    <mat-form-field appearance="outline" class="full-width-field">
       <mat-label>CID-10</mat-label>
-      <input matInput [(ngModel)]="cid10" name="cid10">
+      <input matInput formControlName="cid10">
     </mat-form-field>
 
-    <div class="buttons">
-      <button mat-raised-button class="cancel-btn" (click)="cancelarAtendimento()">Cancelar</button>
-      <button mat-raised-button class="custom-btn" (click)="abrirModalExportarPDF()">Exportar PDF</button>
-      <button mat-raised-button class="custom-btn" (click)="salvarAtendimento()">Salvar</button>
+    <div class="actions-container">
+      <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+      <button mat-stroked-button type="button" (click)="abrirModalExportarPDF()">Exportar PDF</button>
+      <button mat-raised-button color="primary" type="submit">Salvar</button>
     </div>
+
   </form>
 </div>

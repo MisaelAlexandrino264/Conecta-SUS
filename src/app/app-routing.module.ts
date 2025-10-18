@@ -9,6 +9,8 @@ import { PacientesComponent } from './pages/pacientes/pacientes.component';
 import { UsuariosComponent } from './pages/usuarios/usuarios.component';
 import { VisualizarPacienteComponent } from './pages/pacientes/visualizar-paciente/visualizar-paciente.component';
 import { EstagiariosComponent } from './pages/estagiarios/estagiarios.component';
+import { AvaliacaoAtendimentoComponent } from './pages/avaliacao-atendimento/avaliacao-atendimento.component';
+import { HistoricoAtendimentosComponent } from './pages/historico-atendimentos/historico-atendimentos.component'; 
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -19,7 +21,9 @@ const routes: Routes = [
   { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
   { path: 'estagiarios', component: EstagiariosComponent },
   { path: 'visualizar-paciente', component: VisualizarPacienteComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  { path: 'avaliacao/:id', component: AvaliacaoAtendimentoComponent },
+  { path: 'historico-atendimentos', component: HistoricoAtendimentosComponent },
+  { path: '', redirectTo: 'login', pathMatch: 'full' }  
 ];
 
 @NgModule({

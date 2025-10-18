@@ -44,4 +44,15 @@ export class UsuarioService {
       );
   }
 
+  obterProfessores(): Observable<Usuario[]> {
+    return this.firestore.collection<Usuario>('users', ref => ref.where('tipo', '==', 'Professor'))
+      .snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data();
+          const uid = a.payload.doc.id;
+          return { ...data, uid };
+        }))
+      );
+  }
+
 }

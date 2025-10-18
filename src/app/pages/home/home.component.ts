@@ -1,160 +1,147 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AgendamentoModalComponent } from '../home/agendamento-modal/agendamento-modal.component';
 import { Agendamento, AgendamentoService } from '../../services/agendamento.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AuthService } from '../../services/auth.service';
-
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
-  tipoUsuario: string | null = null;
-  selected: Date | null = null;
+export class HomeComponent implements OnInit, OnDestroy {
+  // Subject para gerenciar o ciclo de vida das inscrições
+  private destroy$ = new Subject<void>();
+
+  // Propriedades para a visão de calendário
+  selected: Date | null = new Date();
   agendamentos: Agendamento[] = [];
   hoje = new Date();
   dataNoPassado: boolean = false;
+
+  // Propriedades do usuário
+  tipoUsuario: string | null = null;
+  usuarioLogado: any = null;
 
   constructor(
     public dialog: MatDialog,
     private agendamentoService: AgendamentoService, 
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
-    this.tipoUsuario = this.authService.getTipoUsuarioLocal();
-    console.log('Tipo do usuário (local):', this.tipoUsuario);
-  
-    if (!this.tipoUsuario) {
-      this.authService.getTipoUsuario().then(tipo => {
-        this.tipoUsuario = tipo;
-        console.log('Tipo carregado do Firestore:', tipo);
-      });
-    }
-  
-    if (this.selected) {
-      this.buscarAgendamentos(this.selected);
-    }
+    this.authService.usuarioLogado$.pipe(
+      takeUntil(this.destroy$) // Garante que a inscrição será finalizada ao sair do componente
+    ).subscribe(usuario => {
+      if (usuario) {
+        this.usuarioLogado = usuario;
+        this.tipoUsuario = usuario.tipo;
+        if (this.selected) {
+          this.buscarAgendamentos(this.selected);
+        }
+      } else {
+        // Limpa os dados ao deslogar
+        this.usuarioLogado = null;
+        this.tipoUsuario = null;
+        this.agendamentos = [];
+      }
+    });
   }
-  
 
-  // Buscar agendamentos de acordo com a data selecionada
-  buscarAgendamentos(data: Date | null): void {
-    if (!data) return;
-  
+  // Método chamado quando o componente é destruído (ex: ao navegar para outra página)
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // Método central que busca os dados para cada perfil
+  async buscarAgendamentos(data: Date | null): Promise<void> {
+    if (!data || !this.tipoUsuario) return;
+
     const hojeSemHoras = new Date();
     hojeSemHoras.setHours(0, 0, 0, 0);
-  
     const dataSelecionadaSemHoras = new Date(data);
     dataSelecionadaSemHoras.setHours(0, 0, 0, 0);
-  
     this.dataNoPassado = dataSelecionadaSemHoras < hojeSemHoras;
   
-    const busca$ = this.tipoUsuario === 'Secretaria'
-      ? this.agendamentoService.obterAgendamentosPorData(data)
-      : this.agendamentoService.obterMeusAgendamentosPorData(data);
+    let busca$: Observable<Agendamento[]>;
+
+    if (this.tipoUsuario === 'Secretaria') {
+      busca$ = this.agendamentoService.obterAgendamentosPorData(data);
+    } else if (this.tipoUsuario === 'Estagiário') {
+      busca$ = await this.agendamentoService.obterMeusAgendamentosPorData(data);
+    } else if (this.tipoUsuario === 'Professor') {
+      busca$ = await this.agendamentoService.obterAgendamentosPorProfessorResponsavel(this.usuarioLogado.uid, data);
+    } else {
+      this.agendamentos = [];
+      return;
+    }
   
-    busca$.subscribe((agendamentos) => {
+    busca$.pipe(takeUntil(this.destroy$)).subscribe((agendamentos: Agendamento[]) => {
       this.agendamentos = agendamentos.sort((a, b) => a.hora.localeCompare(b.hora));
     });
   }
-  
-  
+
+  // --- MÉTODOS DE AÇÃO ---
 
   iniciarAtendimento(agendamento: Agendamento): void {
-    console.log('PacienteId enviado para atendimento:', agendamento.pacienteId);
     this.router.navigate(['/atendimento'], { queryParams: { 
       id: agendamento.id,
       pacienteId: agendamento.pacienteId, 
       nome: agendamento.nome, 
       idade: agendamento.idade,
-      data: agendamento.data 
+      data: agendamento.data,
+      professorNome: agendamento.professorResponsavelNome,
+      professorUid: agendamento.professorResponsavelUid
     }});
   }
   
-
   abrirModalAgendamento(agendamento?: Agendamento): void {
-    if (!this.selected && !agendamento) {
-      Swal.fire({
-            icon: 'warning',
-            title: 'Selecione uma data no calendário antes de agendar!',
-            confirmButtonColor: '#0d47a1'
-        });
+    if (!this.selected) {
+      Swal.fire('Atenção!', 'Selecione uma data no calendário antes de agendar!', 'warning');
       return;
     }
   
     const dialogRef = this.dialog.open(AgendamentoModalComponent, {
       width: '400px',
-      data: { 
-        dataSelecionada: this.selected, 
-        agendamento: agendamento || null ,
-        autoFocus: false 
-      },
+      data: { dataSelecionada: this.selected, agendamento: agendamento || null, autoFocus: false },
     });
   
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('Agendamento recebido na home:', result);
-        this.buscarAgendamentos(this.selected);
-      }
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.buscarAgendamentos(this.selected);
     });
   }
   
-
-  // Função para verificar o ID antes de tentar excluir
   verificarIdEExcluir(id: string | undefined): void {
-    if (!id) {
-      console.error('Erro: ID do agendamento está indefinido!');
-      return;
-    }
-  
+    if (!id) return;
     Swal.fire({
-      title: 'Tem certeza?',
-      text: 'Esta ação não pode ser desfeita!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sim, excluir!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.excluirAgendamento(id);
-        Swal.fire(
-          'Excluído!',
-          'O agendamento foi removido com sucesso.',
-          'success'
-        );
-      }
+      title: 'Tem certeza?', text: 'Esta ação não pode ser desfeita!', icon: 'warning',
+      showCancelButton: true, confirmButtonText: 'Sim, excluir!', cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.isConfirmed) this.excluirAgendamento(id);
     });
   }
   
-  
-
   excluirAgendamento(id: string): void {
-    if (!id) {
-      console.error('Erro: ID do agendamento está indefinido!');
-      return;
-    }
-  
     this.agendamentoService.excluirAgendamento(id)
-      .then(() => {
-        console.log('Agendamento excluído com sucesso!');
-        this.buscarAgendamentos(this.selected); 
-      })
-      .catch((error) => {
-        console.error('Erro ao excluir agendamento:', error);
-      });
+      .then(() => Swal.fire('Excluído!', 'O agendamento foi removido.', 'success'))
+      .catch(error => console.error('Erro ao excluir agendamento:', error));
   }
 
-  filtroDatas = (d: Date | null): boolean => {
-    return true; // Agora permite selecionar qualquer data
-  };
-  
-  
+  async irParaAvaliacao(agendamento: Agendamento) {
+    if (!agendamento.id) return;
+    const atendimentoParaAvaliar = await this.agendamentoService.getAtendimentoPorAgendamentoId(agendamento.id);
+    if (atendimentoParaAvaliar?.id) {
+      this.router.navigate(['/avaliacao', atendimentoParaAvaliar.id]);
+    } else {
+      Swal.fire('Atenção', 'O registro deste atendimento ainda não foi concluído pelo estagiário.', 'info');
+    }
+  }
+
+  filtroDatas = (d: Date | null): boolean => true;
 }

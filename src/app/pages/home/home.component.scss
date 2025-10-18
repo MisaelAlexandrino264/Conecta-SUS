@@ -125,3 +125,14 @@ mat-icon {
   cursor: not-allowed !important;
   opacity: 1 !important;               
 }
+
+.mat-chip {
+  &.aceito {
+    background-color: #4CAF50 !important; // Verde
+    color: white !important;
+  }
+  &.rejeitado {
+    background-color: #F44336 !important; // Vermelho
+    color: white !important;
+  }
+}
