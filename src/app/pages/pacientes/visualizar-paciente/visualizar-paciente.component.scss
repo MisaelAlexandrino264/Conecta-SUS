@@ -1,3 +1,4 @@
+
 .visualizar-container {
     padding-top: 64px; 
     max-width: 1200px;
@@ -6,20 +7,19 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.30);
-    //padding-top: 80px; 
   }
-
+  
   .dados-pessoais, .dados-endereco {
     margin-top: 20px;
     p {
       margin: 4px 0;
     }
   }
-
+  
   button[mat-icon-button] {
     margin-top: 10px;
   }
-
+  
   .toggle-label {
     font-weight: bold;
     margin-left: 8px;
@@ -40,9 +40,6 @@
   }
 }
 
-// Adicione estes estilos ao final do seu arquivo .scss
-
-// Estilos para a nova seção de avaliação
 .professor-review-section {
   margin-top: 20px;
   padding-top: 16px;
@@ -64,14 +61,12 @@
   }
 }
 
-// Estilos para o status do atendimento (o chip e o texto)
 .atendimento-card {
-  // Adiciona uma borda colorida baseada no status
   &.aceito {
-    border-left: 4px solid #4CAF50; // Verde
+    border-left: 4px solid #4CAF50;
   }
   &.rejeitado {
-    border-left: 4px solid #F44336; // Vermelho
+    border-left: 4px solid #F44336;
   }
 }
 
@@ -97,4 +92,4 @@
   &.rejeitado {
     color: #F44336;
   }
-}
+}  

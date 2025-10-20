@@ -1,0 +1,41 @@
+.historico-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 24px;
+}
+
+h1 {
+  color: #0d47a1;
+  margin-bottom: 32px;
+}
+
+.sem-historico {
+  text-align: center;
+  padding: 40px;
+  color: #777;
+}
+
+.lista-historico {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-historico {
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+}
+
+.mat-chip {
+  &.aceito {
+    background-color: #4CAF50 !important;
+    color: white !important;
+  }
+  &.rejeitado {
+    background-color: #F44336 !important;
+    color: white !important;
+  }
+}
