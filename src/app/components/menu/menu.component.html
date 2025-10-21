@@ -10,6 +10,8 @@
     
     <a *ngIf="tipoUsuario === 'Professor'" routerLink="/estagiarios" class="menu-item">Estagiários</a>
     
+    <a *ngIf="tipoUsuario === 'Professor' || tipoUsuario === 'Estagiário'" routerLink="/historico-atendimentos" class="menu-item">Atendimentos</a>
+    
     <a (click)="logout()" class="menu-item logout">Sair</a>
   </div>
 </div>

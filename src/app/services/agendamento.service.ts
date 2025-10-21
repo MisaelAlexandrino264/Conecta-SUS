@@ -1,201 +1,132 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, collectionData, query, where, getDocs } from '@angular/fire/firestore';
-import { Auth } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
-import { doc, deleteDoc } from '@angular/fire/firestore';
-import { updateDoc } from '@angular/fire/firestore';
-import { onAuthStateChanged } from '@angular/fire/auth';
-
-
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 export interface Agendamento {
-  id?: string;  
-  data: string;  
-  hora: string;  
+  id?: string;
+  agendamentoId?: string;
+  data: string | Date;
+  hora: string;
   nome: string;
   idade: number;
-  pacienteId?: string; 
-  uid?: string;
-  estagiarioNome?: string;
-  estagiarioUid?: string;
-  status?: string;
+  pacienteId: string;
+  estagiarioNome: string;
+  estagiarioUid: string;
+  professorResponsavelUid: string;
+  professorResponsavelNome: string;
+  anamnese?: string;
+  exameFisico?: string;
+  solicitacaoExames?: string;
+  orientacao?: string;
+  prescricao?: string;
+  conduta?: string;
+  cid10?: string;
+  status?: 'pendente' | 'aceito' | 'rejeitado' | 'finalizado';
+  observacaoProfessor?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AgendamentoService {
-  private colecaoAgendamentos = collection(this.firestore, 'agenda');
+  private agendamentosCollection: AngularFirestoreCollection<Agendamento>;
+  private atendimentosCollection: AngularFirestoreCollection<Agendamento>;
 
-  constructor(private firestore: Firestore, private auth: Auth) {}
-
-  async salvarAgendamento(agendamento: Agendamento): Promise<void> {
-    const user = this.auth.currentUser;
-  
-    if (!user) {
-      console.error('Usuário não autenticado');
-      return;
-    }
-  
-    const agendamentoComUid = {
-      ...agendamento,
-      criadoPorUid: user.uid,
-      status: agendamento.status ?? 'pendente'
-    };
-  
-    await addDoc(this.colecaoAgendamentos, agendamentoComUid)
-      .then(() => console.log("Agendamento salvo com sucesso!"))
-      .catch(error => console.error("Erro ao salvar agendamento:", error));
-  }
-  
-  
-
-obterMeusAgendamentos(): Observable<Agendamento[]> {
-  const user = this.auth.currentUser;
-
-  if (!user) {
-    console.error('Usuário não autenticado');
-    return new Observable();
+  constructor(
+    private firestore: AngularFirestore,
+    private authService: AuthService
+  ) {
+    this.agendamentosCollection = this.firestore.collection<Agendamento>('agendamentos');
+    this.atendimentosCollection = this.firestore.collection<Agendamento>('atendimentos');
   }
 
-  const q = query(this.colecaoAgendamentos, where('uid', '==', user.uid));
+  obterAgendamentosPorData(data: Date): Observable<Agendamento[]> {
+    const dataFormatada = data.toISOString().split('T')[0];
+    return this.firestore.collection<Agendamento>('agendamentos', ref => ref.where('data', '==', dataFormatada))
+      .snapshotChanges().pipe(map(actions => actions.map(a => ({ id: a.payload.doc.id, ...a.payload.doc.data() }))));
+  }
 
-  return new Observable((observer) => {
-    getDocs(q).then((querySnapshot) => {
-      const agendamentos: Agendamento[] = [];
-      querySnapshot.forEach((doc) => {
-        const agendamento = doc.data() as Agendamento;
-        agendamentos.push({
-          ...agendamento,
-          id: doc.id 
-        });
-      });
-      observer.next(agendamentos);
-    }).catch((error) => {
-      console.error("Erro ao obter agendamentos do usuário:", error);
-      observer.error(error);
-    });
-  });
-}
+  async obterMeusAgendamentosPorData(data: Date): Promise<Observable<Agendamento[]>> {
+    const usuarioLogado = await this.authService.getUsuarioLogado();
+    if (!usuarioLogado) return of([]);
+    const dataFormatada = data.toISOString().split('T')[0];
+    return this.firestore.collection<Agendamento>('agendamentos', ref => ref
+      .where('data', '==', dataFormatada)
+      .where('estagiarioUid', '==', usuarioLogado.uid)
+    ).snapshotChanges().pipe(map(actions => actions.map(a => ({ id: a.payload.doc.id, ...a.payload.doc.data() }))));
+  }
+  
+  async obterAgendamentosPorProfessorResponsavel(professorUid: string, data: Date): Promise<Observable<Agendamento[]>> {
+    const dataFormatada = data.toISOString().split('T')[0];
+    return this.firestore.collection<Agendamento>('agendamentos', ref => ref
+      .where('data', '==', dataFormatada)
+      .where('professorResponsavelUid', '==', professorUid)
+    ).snapshotChanges().pipe(map(actions => actions.map(a => ({ id: a.payload.doc.id, ...a.payload.doc.data() }))));
+  }
+  
+  async obterAtendimentosPorPaciente(pacienteId: string): Promise<Agendamento[]> {
+    const snapshot = await this.atendimentosCollection.ref.where('pacienteId', '==', pacienteId).get();
+    if (snapshot.empty) return [];
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() as Agendamento }));
+  }
 
+  getAtendimentoById(id: string): Observable<Agendamento | undefined> {
+    return this.atendimentosCollection.doc<Agendamento>(id).snapshotChanges().pipe(
+      map(action => {
+        if (!action.payload.exists) return undefined;
+        const data = action.payload.data();
+        return { id, ...data };
+      })
+    );
+  }
 
-
-obterMeusAgendamentosPorData(data: Date): Observable<Agendamento[]> {
-  const dataString = data.toISOString().split('T')[0];
-
-  return new Observable<Agendamento[]>((observer) => {
-    onAuthStateChanged(this.auth, (user) => {
-      if (!user) {
-        console.error('Usuário não autenticado');
-        observer.next([]); // retorna lista vazia
-        return;
-      }
-
-      const q = query(this.colecaoAgendamentos,
-        where('data', '==', dataString),
-        where('estagiarioUid', '==', user.uid));
-
-      getDocs(q)
-        .then((querySnapshot) => {
-          const agendamentos: Agendamento[] = [];
-          querySnapshot.forEach((doc) => {
-            const agendamento = doc.data() as Agendamento;
-            agendamentos.push({
-              ...agendamento,
-              id: doc.id
-            });
-          });
-          observer.next(agendamentos);
-        })
-        .catch((error) => {
-          console.error("Erro ao obter agendamentos:", error);
-          observer.error(error);
-        });
-    });
-  });
-}
-
-obterAgendamentosPorData(data: Date): Observable<Agendamento[]> {
-  const dataString = data.toISOString().split('T')[0];
-
-  const q = query(this.colecaoAgendamentos, where('data', '==', dataString));
-
-  return new Observable<Agendamento[]>((observer) => {
-    getDocs(q).then((querySnapshot) => {
-      const agendamentos: Agendamento[] = [];
-      querySnapshot.forEach((doc) => {
-        const agendamento = doc.data() as Agendamento;
-        agendamentos.push({ ...agendamento, id: doc.id });
-      });
-      observer.next(agendamentos);
-    }).catch((error) => {
-      console.error("Erro ao obter agendamentos (secretaria):", error);
-      observer.error(error);
-    });
-  });
-}
-
-
-async verificarDisponibilidade(estagiarioUid: string, data: string, hora: string, agendamentoId?: string): Promise<boolean> {
-  const q = query(this.colecaoAgendamentos,
-    where('estagiarioUid', '==', estagiarioUid),
-    where('data', '==', data),
-    where('hora', '==', hora)
-  );
-
-  const snapshot = await getDocs(q);
-
-  // Se nenhum agendamento nesse horário, está livre
-  if (snapshot.empty) return true;
-
-  // Se for edição, verificar se o único agendamento é ele mesmo
-  if (agendamentoId && snapshot.size === 1) {
+  async getAtendimentoPorAgendamentoId(agendamentoId: string): Promise<Agendamento | null> {
+    const snapshot = await this.atendimentosCollection.ref.where('agendamentoId', '==', agendamentoId).limit(1).get();
+    if (snapshot.empty) return null;
     const doc = snapshot.docs[0];
-    return doc.id === agendamentoId;
+    return { id: doc.id, ...doc.data() };
   }
 
-  return false;
+  salvarAgendamento(agendamento: Agendamento): Promise<any> { return this.agendamentosCollection.add(agendamento); }
+  atualizarAgendamento(agendamento: Agendamento): Promise<void> { return this.agendamentosCollection.doc(agendamento.id).update(agendamento); }
+  excluirAgendamento(id: string): Promise<void> { return this.agendamentosCollection.doc(id).delete(); }
+  criarAtendimento(atendimento: Agendamento): Promise<any> { const { id, ...data } = atendimento; return this.atendimentosCollection.add(data); }
+  marcarAgendamentoComoFinalizado(id: string): Promise<void> { return this.agendamentosCollection.doc(id).update({ status: 'finalizado' }); }
+
+  avaliarAtendimento(id: string, status: 'aceito' | 'rejeitado', observacao: string): Promise<void> {
+    return this.atendimentosCollection.doc(id).update({ status, observacaoProfessor: observacao });
+  }
+
+  async avaliarEFinalizar(atendimentoId: string, agendamentoId: string, novoStatus: 'aceito' | 'rejeitado', observacao: string): Promise<void> {
+    const batch = this.firestore.firestore.batch();
+    const atendimentoRef = this.atendimentosCollection.doc(atendimentoId).ref;
+    batch.update(atendimentoRef, { status: novoStatus, observacaoProfessor: observacao });
+    const agendamentoRef = this.agendamentosCollection.doc(agendamentoId).ref;
+    batch.update(agendamentoRef, { status: novoStatus });
+    return batch.commit();
+  }
+
+obterAtendimentosAvaliadosPorEstagiario(estagiarioUid: string): Observable<Agendamento[]> {
+  return this.atendimentosCollection.snapshotChanges().pipe(
+    map(actions => actions.map(a => ({ id: a.payload.doc.id, ...a.payload.doc.data() }))
+      .filter(atendimento => 
+        atendimento.estagiarioUid === estagiarioUid && 
+        (atendimento.status === 'aceito' || atendimento.status === 'rejeitado')
+      )
+    )
+  );
 }
 
-
-
-
-
-  async excluirAgendamento(id: string): Promise<void> {
-    if (!id) {
-      console.error("Erro: ID do agendamento está indefinido!");
-      return;
-    }
-  
-    const docRef = doc(this.firestore, `agenda/${id}`);
-    
-    
-    await deleteDoc(docRef)
-      .then(() => console.log("Agendamento excluído com sucesso!"))
-      .catch(error => console.error("Erro ao excluir agendamento:", error));
-  }
-
-  async atualizarAgendamento(agendamento: Agendamento): Promise<void> {
-    if (!agendamento.id) {
-      console.error("Erro: ID do agendamento está indefinido!");
-      return;
-    }
-  
-    const docRef = doc(this.firestore, `agenda/${agendamento.id}`);
-  
-    await updateDoc(docRef, {
-      data: agendamento.data,
-      hora: agendamento.hora,
-      nome: agendamento.nome,
-      idade: agendamento.idade,
-      estagiarioNome: agendamento.estagiarioNome,
-      estagiarioUid: agendamento.estagiarioUid,
-      status: agendamento.status ?? 'pendente'
-    })
-    .then(() => console.log("Agendamento atualizado com sucesso!"))
-    .catch(error => console.error("Erro ao atualizar agendamento:", error));
-  }
-  
-  
-
+obterAtendimentosAvaliadosPorProfessor(professorUid: string): Observable<Agendamento[]> {
+  return this.atendimentosCollection.snapshotChanges().pipe(
+    map(actions => actions.map(a => ({ id: a.payload.doc.id, ...a.payload.doc.data() }))
+      .filter(atendimento => 
+        atendimento.professorResponsavelUid === professorUid && 
+        (atendimento.status === 'aceito' || atendimento.status === 'rejeitado')
+      )
+    )
+  );
+}
 }

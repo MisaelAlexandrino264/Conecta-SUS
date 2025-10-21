@@ -4,7 +4,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AgendamentoService, Agendamento } from '../../../services/agendamento.service';
 import { PacienteService, Paciente } from '../../../services/paciente.service';
 import { EstagiarioService, Estagiario } from '../../../services/estagiario.service';
+import { UsuarioService, Usuario } from '../../../services/usuario.service';
 import Swal from 'sweetalert2';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-agendamento-modal',
@@ -13,10 +16,15 @@ import Swal from 'sweetalert2';
 })
 export class AgendamentoModalComponent implements OnInit {
   agendamentoForm!: FormGroup;
-  pacientesFiltrados: Paciente[] = [];
-  estagiariosFiltrados: Estagiario[] = [];
-  idade: number | null = null;
-  id?: string;
+  pacientesFiltrados$!: Observable<Paciente[]>;
+  estagiariosFiltrados$!: Observable<Estagiario[]>;
+  professoresFiltrados$!: Observable<Usuario[]>;
+
+  private todosOsPacientes: Paciente[] = [];
+  private todosOsEstagiarios: Estagiario[] = [];
+  private todosOsProfessores: Usuario[] = [];
+  
+  private agendamentoExistente: Agendamento | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -24,95 +32,67 @@ export class AgendamentoModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { dataSelecionada: Date, agendamento?: Agendamento },
     private agendamentoService: AgendamentoService,
     private pacienteService: PacienteService,
-    private estagiarioService: EstagiarioService
+    private estagiarioService: EstagiarioService,
+    private usuarioService: UsuarioService
   ) {}
 
   ngOnInit(): void {
+    this.agendamentoExistente = this.data.agendamento || null;
+
     this.agendamentoForm = this.fb.group({
-      hora: ['', Validators.required],
-      nome: ['', Validators.required],
-      estagiarioNome: ['', Validators.required]
+      hora: [this.agendamentoExistente?.hora || '', Validators.required],
+      nome: [this.agendamentoExistente?.nome || '', [Validators.required, this.selecaoValidaValidator('paciente')]],
+      estagiarioNome: [this.agendamentoExistente?.estagiarioNome || '', [Validators.required, this.selecaoValidaValidator('estagiario')]],
+      professorResponsavelNome: [this.agendamentoExistente?.professorResponsavelNome || '', [Validators.required, this.selecaoValidaValidator('professor')]]
     });
-  
-    if (this.data.agendamento) {
-      const { hora, nome, estagiarioNome } = this.data.agendamento;
-      this.idade = this.data.agendamento.idade;
-      this.id = this.data.agendamento.id;
-  
-      this.agendamentoForm.patchValue({ hora, nome, estagiarioNome });
-  
-      this.pacienteService.buscarPacientePorNome(nome).subscribe(pacientes => {
-        this.pacientesFiltrados = pacientes;
-  
-        this.agendamentoForm.get('nome')?.setValidators([
-          Validators.required,
-          this.pacienteValidoValidator(this.pacientesFiltrados)
-        ]);
-        this.agendamentoForm.get('nome')?.updateValueAndValidity();
-      });
-  
-      this.estagiarioService.buscarEstagiariosPorNome(estagiarioNome || '').subscribe(estagiarios => {
-        this.estagiariosFiltrados = estagiarios;
-  
-        this.agendamentoForm.get('estagiarioNome')?.setValidators([
-          Validators.required,
-          this.estagiarioValidoValidator(this.estagiariosFiltrados)
-        ]);
-        this.agendamentoForm.get('estagiarioNome')?.updateValueAndValidity();
-      });
-    }
-  }
-  
 
-  buscarPacientes(nome: string): void {
-    if (nome.length < 2) {
-      this.pacientesFiltrados = [];
-      return;
-    }
-
-    this.pacienteService.buscarPacientePorNome(nome).subscribe(pacientes => {
-      this.pacientesFiltrados = pacientes;
-
-      this.agendamentoForm.get('nome')?.setValidators([
-        Validators.required,
-        this.pacienteValidoValidator(this.pacientesFiltrados)
-      ]);
-      this.agendamentoForm.get('nome')?.updateValueAndValidity();
-    });
+    this.carregarDadosIniciais();
+    this.configurarAutocompletes();
   }
 
-  buscarEstagiarios(nome: string): void {
-    if (nome.length < 2) {
-      this.estagiariosFiltrados = [];
-      return;
-    }
-
-    this.estagiarioService.buscarEstagiariosPorNome(nome).subscribe(estagiarios => {
-      this.estagiariosFiltrados = estagiarios;
-
-      this.agendamentoForm.get('estagiarioNome')?.setValidators([
-        Validators.required,
-        this.estagiarioValidoValidator(this.estagiariosFiltrados)
-      ]);
-      this.agendamentoForm.get('estagiarioNome')?.updateValueAndValidity();
-    });
+  private carregarDadosIniciais(): void {
+    this.pacienteService.obterPacientes().subscribe(data => this.todosOsPacientes = data);
+    this.estagiarioService.buscarEstagiariosPorNome('').subscribe(data => this.todosOsEstagiarios = data);
+    this.usuarioService.obterProfessores().subscribe(data => this.todosOsProfessores = data);
+  }
+  
+  private configurarAutocompletes(): void {
+    this.pacientesFiltrados$ = this.agendamentoForm.get('nome')!.valueChanges.pipe(
+      startWith(this.agendamentoForm.get('nome')!.value || ''),
+      map(value => this._filtrar(value || '', this.todosOsPacientes))
+    );
+    this.estagiariosFiltrados$ = this.agendamentoForm.get('estagiarioNome')!.valueChanges.pipe(
+      startWith(this.agendamentoForm.get('estagiarioNome')!.value || ''),
+      map(value => this._filtrar(value || '', this.todosOsEstagiarios))
+    );
+    this.professoresFiltrados$ = this.agendamentoForm.get('professorResponsavelNome')!.valueChanges.pipe(
+      startWith(this.agendamentoForm.get('professorResponsavelNome')!.value || ''),
+      map(value => this._filtrar(value || '', this.todosOsProfessores))
+    );
   }
 
-  pacienteValidoValidator(pacientes: Paciente[]) {
+  private _filtrar(value: string, lista: any[]): any[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+    return lista.filter(item => item.nome.toLowerCase().includes(filterValue));
+  }
+
+  selecaoValidaValidator(tipo: 'paciente' | 'estagiario' | 'professor'): (control: AbstractControl) => ValidationErrors | null {
     return (control: AbstractControl): ValidationErrors | null => {
       const nome = control.value;
-      return pacientes.some(p => p.nome === nome) ? null : { pacienteInvalido: true };
-    };
-  }
-
-  estagiarioValidoValidator(estagiarios: Estagiario[]) {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const nome = control.value;
-      return estagiarios.some(p => p.nome === nome) ? null : { estagiarioInvalido: true };
+      if (!nome) return null;
+      
+      let lista: any[] = [];
+      if (tipo === 'paciente') lista = this.todosOsPacientes;
+      if (tipo === 'estagiario') lista = this.todosOsEstagiarios;
+      if (tipo === 'professor') lista = this.todosOsProfessores;
+      
+      const selecaoValida = lista.some(item => item.nome === nome);
+      return selecaoValida ? null : { selecaoInvalida: true };
     };
   }
 
   calcularIdade(dataNascimento: string): number {
+    if (!dataNascimento) return 0;
     const nascimento = new Date(dataNascimento);
     const idadeDifMs = Date.now() - nascimento.getTime();
     const idadeData = new Date(idadeDifMs);
@@ -124,67 +104,49 @@ export class AgendamentoModalComponent implements OnInit {
   }
 
   async salvar(): Promise<void> {
-    if (this.agendamentoForm.invalid) {
-      this.agendamentoForm.markAllAsTouched();
-      return;
-    }
-  
-    const { hora, nome, estagiarioNome } = this.agendamentoForm.value;
-    const paciente = this.pacientesFiltrados.find(p => p.nome === nome);
-    const estagiario = this.estagiariosFiltrados.find(p => p.nome === estagiarioNome);
-  
-    if (!paciente || !estagiario) return;
-  
-    this.idade = this.calcularIdade(paciente.dataNascimento);
-    const dataAgendamento = this.data.dataSelecionada.toISOString().split('T')[0];
-  
-    const podeAgendar = await this.agendamentoService.verificarDisponibilidade(
-      estagiario.uid,
-      dataAgendamento,
-      hora,
-      this.id 
-    );
-  
-    if (!podeAgendar) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Erro ao agendar',
-        text: 'Esse estagiario já tem um agendamento nesse horário.',
-        confirmButtonColor: '#0d47a1'
-      });
-      return;
-    }
-    console.log('Paciente no momento da criação do agendamento:', paciente);
-  
-    const agendamento: Agendamento = {
-      data: dataAgendamento,
-      hora,
-      nome,
-      idade: this.idade,
-      pacienteId: paciente.id, 
-      estagiarioNome,
-      estagiarioUid: estagiario.uid,
-      status: 'pendente' 
-    };
-  
-    const request = this.id
-      ? this.agendamentoService.atualizarAgendamento({ ...agendamento, id: this.id })
-      : this.agendamentoService.salvarAgendamento(agendamento);
-  
-    request
-      .then(() => this.dialogRef.close(agendamento))
-      .catch(error => console.error('Erro ao salvar agendamento:', error));
-  }
-  
-  
-
-  onInput(event: Event): void {
-    const nome = (event.target as HTMLInputElement).value;
-    this.buscarPacientes(nome);
+  if (this.agendamentoForm.invalid) {
+    this.agendamentoForm.markAllAsTouched();
+    Swal.fire('Atenção!', 'Por favor, preencha todos os campos corretamente, selecionando um valor válido da lista.', 'warning');
+    return;
   }
 
-  onInputEstagiario(event: Event): void {
-    const nome = (event.target as HTMLInputElement).value;
-    this.buscarEstagiarios(nome);
+  const formValue = this.agendamentoForm.value;
+  const paciente = this.todosOsPacientes.find(p => p.nome === formValue.nome);
+  const estagiario = this.todosOsEstagiarios.find(p => p.nome === formValue.estagiarioNome);
+  const professor = this.todosOsProfessores.find(p => p.nome === formValue.professorResponsavelNome);
+
+  if (!paciente || !estagiario || !professor || !paciente.id) {
+    Swal.fire('Erro de Validação', 'Paciente, Estagiário ou Professor inválido. Selecione um valor da lista.', 'error');
+    return;
   }
+
+  const agendamentoBase: Omit<Agendamento, 'id'> = {
+    data: this.data.dataSelecionada.toISOString().split('T')[0],
+    hora: formValue.hora,
+    nome: paciente.nome,
+    idade: this.calcularIdade(paciente.dataNascimento),
+    pacienteId: paciente.id,
+    estagiarioNome: estagiario.nome,
+    estagiarioUid: estagiario.uid,
+    professorResponsavelUid: professor.uid,
+    professorResponsavelNome: professor.nome,
+    status: this.agendamentoExistente?.status || 'pendente'
+  };
+
+  try {
+    if (this.agendamentoExistente?.id) {
+      const agendamentoParaAtualizar: Agendamento = {
+        ...agendamentoBase,
+        id: this.agendamentoExistente.id
+      };
+      await this.agendamentoService.atualizarAgendamento(agendamentoParaAtualizar);
+    } else {
+      await this.agendamentoService.salvarAgendamento(agendamentoBase);
+    }
+    this.dialogRef.close(agendamentoBase);
+  } catch (error) {
+    console.error('Erro ao salvar agendamento:', error);
+    Swal.fire('Erro!', 'Ocorreu um erro ao salvar o agendamento.', 'error');
+  }
+}
 }

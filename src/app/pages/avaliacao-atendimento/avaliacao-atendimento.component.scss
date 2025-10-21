@@ -1,0 +1,20 @@
+.avaliacao-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 24px;
+}
+.info-header, .detalhes-atendimento, .professor-review-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  p { margin: 6px 0; }
+}
+h1, h3 { color: #0d47a1; }
+.mat-form-field { width: 100%; }
+.botoes-avaliacao {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}

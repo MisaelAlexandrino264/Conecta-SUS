@@ -1,0 +1,35 @@
+<app-menu></app-menu>
+<div class="avaliacao-container" *ngIf="atendimento">
+  <h1>Avaliação de Atendimento</h1>
+
+  <div class="info-header">
+    <p><strong>Data:</strong> {{ atendimento.data | date: 'dd/MM/yyyy' }}</p>
+    <p><strong>Paciente:</strong> {{ atendimento.nome }}</p>
+    <p><strong>Estagiário:</strong> {{ atendimento.estagiarioNome }}</p>
+  </div>
+
+  <div class="detalhes-atendimento">
+    <h3>Detalhes da Consulta</h3>
+    <p><strong>Anamnese:</strong> {{ atendimento.anamnese }}</p>
+    <p><strong>Exame Físico:</strong> {{ atendimento.exameFisico }}</p>
+    <p><strong>Solicitação de Exames:</strong> {{ atendimento.solicitacaoExames }}</p>
+    <p><strong>Orientação:</strong> {{ atendimento.orientacao }}</p>
+    <p><strong>Prescrição:</strong> {{ atendimento.prescricao }}</p>
+    <p><strong>Conduta:</strong> {{ atendimento.conduta }}</p>
+    <p><strong>CID-10:</strong> {{ atendimento.cid10 }}</p>
+  </div>
+
+  <div class="professor-review-section">
+    <h3>Formulário de Avaliação</h3>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Observações</mat-label>
+      <textarea matInput [(ngModel)]="observacaoProfessor" rows="4"></textarea>
+    </mat-form-field>
+
+    <div class="botoes-avaliacao">
+      <button mat-stroked-button (click)="cancelar()">Voltar</button>
+      <button mat-raised-button color="warn" (click)="salvarAvaliacao('rejeitado')">Rejeitar</button>
+      <button mat-raised-button color="primary" (click)="salvarAvaliacao('aceito')">Aceitar</button>
+    </div>
+  </div>
+</div>

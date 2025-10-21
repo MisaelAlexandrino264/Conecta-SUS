@@ -1,59 +1,85 @@
 <app-menu></app-menu>
-<div class="content">
+
+<div class="content" *ngIf="tipoUsuario">
   <h2>Bem-vindo ao Interpront</h2>
 
   <div class="main-layout">
     <div class="left-column">
-      <h3>Atendimentos</h3>
+      <h3>Agendamentos para {{ selected | date: 'dd/MM/yyyy' }}</h3>
+      
+      <div *ngIf="agendamentos.length === 0" class="sem-agendamentos">
+          <p>Nenhum agendamento para esta data.</p>
+      </div>
+
       <div *ngFor="let agendamento of agendamentos" class="appointment">
         <p><strong>Horário:</strong> {{ agendamento.hora }}</p>
         <p><strong>Paciente:</strong> {{ agendamento.nome }}</p>
-        <p *ngIf="tipoUsuario === 'Secretaria'"><strong>Estagiário:</strong> {{ agendamento.estagiarioNome }}</p>
-
         
-        <div class="appointment-actions">
-          <button 
-            mat-raised-button 
-            class="custom-btn" 
-            (click)="iniciarAtendimento(agendamento)" 
-            *ngIf="tipoUsuario === 'Estagiário' && !dataNoPassado"
-            [disabled]="agendamento.status !== 'pendente'">
-            Iniciar Atendimento
-          </button>
-          <p *ngIf="agendamento.status !== 'pendente'" class="status-msg">
-            Atendimento realizado com sucesso.
-          </p>
+        <p *ngIf="tipoUsuario === 'Secretaria' || tipoUsuario === 'Professor'">
+          <strong>Estagiário:</strong> {{ agendamento.estagiarioNome }}
+        </p>
+        
+        <p *ngIf="tipoUsuario === 'Secretaria'">
+          <strong>Professor:</strong> {{ agendamento.professorResponsavelNome }}
+        </p>
 
-          <mat-icon class="edit-icon" 
-            *ngIf="tipoUsuario === 'Secretaria' && !dataNoPassado" 
-            (click)="abrirModalAgendamento(agendamento)">
-            edit
-          </mat-icon>
-          <mat-icon class="delete-icon" 
-            *ngIf="tipoUsuario === 'Secretaria' && !dataNoPassado" 
-            (click)="verificarIdEExcluir(agendamento.id)">
-            delete
-          </mat-icon>
+        <div class="appointment-actions">
+          
+          <ng-container *ngIf="tipoUsuario === 'Estagiário'">
+            <button
+              mat-raised-button
+              class="custom-btn"
+              (click)="iniciarAtendimento(agendamento)"
+              *ngIf="!dataNoPassado"
+              [disabled]="agendamento.status === 'finalizado' || agendamento.status === 'aceito' || agendamento.status === 'rejeitado'">
+              {{ (agendamento.status === 'aceito' || agendamento.status === 'rejeitado') ? 'Avaliado' : (agendamento.status === 'finalizado' ? 'Realizado' : 'Iniciar Atendimento') }}
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="tipoUsuario === 'Professor'">
+            <button
+              *ngIf="agendamento.status === 'finalizado'"
+              mat-stroked-button
+              color="primary"
+              (click)="irParaAvaliacao(agendamento)">
+              Avaliar
+            </button>
+            <mat-chip-listbox *ngIf="agendamento.status === 'aceito' || agendamento.status === 'rejeitado'">
+              <mat-chip [ngClass]="agendamento.status" disabled>
+                {{ agendamento.status | titlecase }}
+              </mat-chip>
+            </mat-chip-listbox>
+          </ng-container>
+          
+          <ng-container *ngIf="tipoUsuario === 'Secretaria'">
+            <mat-icon class="edit-icon"
+              *ngIf="!dataNoPassado"
+              (click)="abrirModalAgendamento(agendamento)">
+              edit
+            </mat-icon>
+            <mat-icon class="delete-icon"
+              *ngIf="!dataNoPassado"
+              (click)="verificarIdEExcluir(agendamento.id)">
+              delete
+            </mat-icon>
+          </ng-container>
         </div>
       </div>
     </div>
 
     <div class="right-column">
       <mat-card class="demo-inline-calendar-card">
-        <mat-calendar [(selected)]="selected" (selectedChange)="buscarAgendamentos(selected)" [dateFilter]="filtroDatas"></mat-calendar>
+        <mat-calendar [(selected)]="selected" (selectedChange)="buscarAgendamentos($event)" [dateFilter]="filtroDatas"></mat-calendar>
       </mat-card>
-      <p>Data selecionada: {{ selected | date: 'dd/MM/yyyy' }}</p>
-
+      
       <button
-       mat-raised-button
-      class="custom-btn schedule-btn"
-      *ngIf="tipoUsuario === 'Secretaria'"
-      (click)="abrirModalAgendamento()"
-      [disabled]="dataNoPassado">
-  Agendar Atendimento
-</button>
-
-
+        mat-raised-button
+        class="custom-btn schedule-btn"
+        *ngIf="tipoUsuario === 'Secretaria'"
+        (click)="abrirModalAgendamento()"
+        [disabled]="dataNoPassado">
+        Agendar Atendimento
+      </button>
     </div>
   </div>
 </div>
